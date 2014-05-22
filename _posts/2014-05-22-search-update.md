@@ -1,9 +1,7 @@
 ---
-published: false
+layout: post
+title: Search Update
 ---
-
-## Search Update
-
 We now have a plan in place for moving forward with search. The details are outlined below:
 
 ###Current Plan
