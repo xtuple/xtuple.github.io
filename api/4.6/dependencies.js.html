@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: enyo-x/source/widgets/dependencies.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: enyo-x/source/widgets/dependencies.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint indent:2, curly:true, eqeqeq:true, immed:true, latedef:true,
+newcap:true, noarg:true, regexp:true, undef:true, trailing:true,
+white:true, strict:false*/
+/*global enyo:true, XT:true, XM:true, XV:true, _:true, Backbone:true */
+
+(function () {
+
+  /**
+    @name XV.DependencyPicker
+    @class For the {@link XV.DependciesWidget} displays the list of dependencies
+    that the user can select from to classify a workflow dependency.
+    @extends XV.PickerWidget
+   */
+  enyo.kind(
+    /** @lends XV.DependencyPicker# */{
+    name: "XV.DependencyPicker",
+    kind: "XV.PickerWidget",
+    published: {
+      suppressedId: ""
+    },
+    classes: "xv-dependency-picker",
+    showLabel: false,
+    noneText: "_delete".loc(),
+    noneClasses: "xv-negative",
+    idAttribute: "uuid",
+    orderBy: [
+      {attribute: 'sequence'}
+    ],
+    filter: function (models, options) {
+      var suppressedId = this.getSuppressedId();
+
+      return _.filter(models || [], function (model) {
+        return model.id !== suppressedId;
+      });
+    }
+  });
+
+  /**
+    @name XV.DependencyItem
+    @class Contains a set of fittable columns which make up a single row in a list of characteristics
+      for the {@link XV.CharacteristicsWidget}.&lt;br />
+    Components: {@link XV.CharacteristicPicker}, {@link XV.InputWidget},
+      {@link XV.DateWidget}, {@link XV.OptionsPicker}.&lt;br />
+    Derived from &lt;a href="http://enyojs.com/api/#enyo.FittableColumns">enyo.FittableColumns&lt;/a>.
+    @extends enyo.FittableColumns
+   */
+  enyo.kind(
+      /** @lends XV.DependencyItem# */{
+    name: "XV.DependencyItem",
+    kind: "FittableColumns",
+    classes: "xv-dependency-item",
+    published: {
+      value: null,
+      parentId: "",
+      disabled: false
+    },
+    handlers: {
+      onValueChange: "controlValueChanged"
+    },
+    components: [
+      {kind: "XV.DependencyPicker"}
+    ],
+    disabledChanged: function (oldValue) {
+      this.$.dependencyPicker.setDisabled(this.disabled);
+    },
+    controlValueChanged: function (inSender, inEvent) {
+      var value = inSender.getValue(),
+        model = this.getValue();
+      if (_.isObject(value)) {
+        model.set("id", value.id);
+      } else {
+        model.off("change");
+        model.unset("id"); // So we can destroy w/o triggering sync
+        model.destroy();
+      }
+      return true;
+    },
+    parentIdChanged: function () {
+      var picker = this.$.dependencyPicker;
+
+      picker.setSuppressedId(this.getParentId());
+      picker.buildList();
+    },
+    setCollection: function (collection) {
+      this.$.dependencyPicker.setCollection(collection);
+    },
+    valueChanged: function () {
+      var picker = this.$.dependencyPicker,
+        model = this.getValue(),
+        id = model.get("id");
+
+      picker.setValue(id, {silent: true});
+    }
+  });
+
+  var _changed = function (model) {
+    var ids = this._successors.pluck("id").toString();
+    this.setValue({successors: ids});
+  };
+
+  /**
+    @name XV.DependenciesWidget
+    @class Use to implement a box for entering and viewing dependencies.
+    Made up of a header, a repeater (the control for making the list of dependency items),
+      and fittable columns for the navigation buttons.&lt;br />
+    Components: {@link XV.DependencyItem}.
+   */
+  enyo.kind(/** @lends XV.DependenciesWidget# */{
+    name: "XV.DependenciesWidget",
+    classes: "xv-dependencies-widget",
+    events: {
+      onValueChange: ""
+    },
+    published: {
+      attr: null,
+      model: null,
+      workflow: null,
+      parentId: "",
+      successors: null,
+      disabled: false
+    },
+    components: [
+      {kind: "onyx.GroupboxHeader", content: "_successors".loc()},
+      {kind: "Repeater", count: 0, onSetupItem: "setupItem", components: [
+        {kind: "XV.DependencyItem"}
+      ]},
+      {kind: "FittableColumns", classes: "xv-dependency-buttons",
+        components: [
+        {kind: "onyx.Button", name: "newButton",
+          classes: "icon-plus-sign-alt xv-dependency-button", onclick: "newItem"}
+      ]}
+    ],
+    create: function () {
+      this.inherited(arguments);
+      this._successors = new Backbone.Collection();
+      this._successors.on("remove", _changed, this);
+    },
+    disabledChanged: function () {
+      this.$.newButton.setDisabled(this.disabled);
+    },
+    /**
+     Kick off the repeater.
+     */
+    lengthChanged: function () {
+      this.$.repeater.setCount(this._successors.length);
+    },
+    newItem: function () {
+      var model = new Backbone.Model();
+      model.on("change", _changed, this);
+      this._successors.add(model);
+      this.lengthChanged();
+    },
+    /**
+      Render the repeaterlist.
+     */
+    setupItem: function (inSender, inEvent) {
+      var item = inEvent.item.$.dependencyItem,
+        successor = this._successors.at(inEvent.index),
+        workflow = this.getWorkflow();
+      item.setDisabled(this.disabled);
+      item.setCollection(workflow);
+      item.setParentId(this.getParentId());
+      item.setValue(successor);
+      return true;
+    },
+
+    setValue: function (value, options) {
+      options = options || {};
+      var attr = this.getAttr(),
+        changed = {},
+        keys = _.keys(value),
+        key,
+        set,
+        i;
+
+      // Loop through the properties and update calling
+      // appropriate "set" functions and add to "changed"
+      // object if applicable
+      for (i = 0; i &lt; keys.length; i++) {
+        key = keys[i];
+        set = 'set' + key.slice(0, 1).toUpperCase() + key.slice(1);
+        this[set](value[key]);
+        if (attr[key]) {
+          changed[attr[key]] = value[key];
+        }
+      }
+
+      // Bubble changes if applicable
+      if (!_.isEmpty(changed) && !options.silent) {
+        this.doValueChange({value: changed});
+      }
+    },
+
+    successorsChanged: function () {
+      var successors = this.getSuccessors(),
+        that = this,
+        models = [];
+
+      successors =  successors ? successors.split(",") : [];
+
+      // Handle as an array internally
+      _.each(successors, function (successor) {
+        var model = new Backbone.Model();
+        model.set("id", successor);
+        model.on("change", _changed, that);
+        models.push(model);
+      });
+      this._successors.reset(models);
+      this.lengthChanged();
+    }
+
+  });
+
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.DocumentAssignmentsMixin.html">DocumentAssignmentsMixin</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jul 30 2014 22:58:38 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

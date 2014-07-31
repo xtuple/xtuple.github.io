@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: enyo-x/source/widgets/completer.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: enyo-x/source/widgets/completer.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint node:true, indent:2, curly:true, eqeqeq:true, immed:true, latedef:true, newcap:true, noarg:true,
+regexp:true, undef:true, trailing:true, white:true, browser:true */
+/*global XT:true, XV:true, XM:true, Backbone:true, enyo:true, _:true */
+
+(function () {
+
+  /**
+    @name XV.Completer
+    @class Renders a list of items that can be selected from a menu.&lt;br />
+    Used to create the autocomplete list for {@link XV.Combobox}.&lt;br />
+    Derived from &lt;a href="http://enyojs.com/api/#onyx.Picker">onyx.Picker&lt;/a>.&lt;br />
+    Note: Each item in the list is an onyx.MenuItem,
+    so an onSelect event with the item can be listened to by a client application to determine which picker item was selected.
+    @extends onyx.Picker
+   */
+  enyo.kind(
+    /** @lends XV.Completer# */{
+    name: "XV.Completer",
+    kind: "onyx.Picker",
+    classes: "xv-combobox-picker",
+    // Hack: make sure picker is always on top ('floating' doesn't work)
+    style: "width: 100px; z-index: 999;",
+    modal: false,
+    /**
+      Unfortunately this is a copy of code from menu. It makes adjustments to account for the
+      height of the completer widget so the menu doesn't cover over typing area.
+    */
+    adjustPosition: function (belowActivator) {
+      var r,
+        rHeight;
+      if (this.showing && this.hasNode()) {
+        this.removeClass("onyx-menu-up");
+
+        //Reset the left position before we get the bounding rect for proper horizontal calculation.
+        if (!this.floating) { this.applyPosition({left: "auto"}); }
+
+        var b = this.node.getBoundingClientRect();
+        var bHeight = (b.height === undefined) ? (b.bottom - b.top) : b.height;
+        var innerHeight = (window.innerHeight === undefined) ? document.documentElement.clientHeight : window.innerHeight;
+        var innerWidth = (window.innerWidth === undefined) ? document.documentElement.clientWidth : window.innerWidth;
+
+        //Position the menu above the activator if it's getting cut off, but only if there's more room above than below.
+        this.menuUp = (b.top + bHeight > innerHeight) && ((innerHeight - b.bottom) &lt; (b.top - bHeight));
+        this.addRemoveClass("onyx-menu-up", this.menuUp);
+
+        //If floating, adjust the vertical positioning.
+        if (this.floating) {
+          r = this.activatorOffset;
+          rHeight = (r.height === undefined) ? (r.bottom - r.top) : r.height;
+          //if the menu doesn't fit below the activator, move it up
+          if (this.menuUp) {
+            this.applyPosition({top: (r.top - rHeight - bHeight + (this.showOnTop ? r.height : 0)), bottom: "auto"});
+          } else {
+            //if the top of the menu is above the top of the activator and there's room to move it down, do so
+            if ((b.top &lt; r.top) && (r.top + (belowActivator ? r.height : 0) + bHeight &lt; innerHeight))
+            {
+              this.applyPosition({top: r.top + rHeight + (this.showOnTop ? 0 : r.height), bottom: "auto"});
+            }
+          }
+        }
+
+        //Adjust the horizontal positioning to keep the menu from being cut off on the right.
+        if ((b.right) > innerWidth) {
+          if (this.floating) {
+            this.applyPosition({left: r.left - (b.left + b.width - innerWidth)});
+          } else {
+            this.applyPosition({left: - (b.right - innerWidth)});
+          }
+        }
+
+        //Finally prevent the menu from being cut off on the left.
+        if (b.left &lt; 0) {
+          if (this.floating) {
+            this.applyPosition({left: 0, right: "auto"});
+          } else {
+            //handle the situation where a non-floating menu is right or left aligned
+            if (this.getComputedStyleValue("right") === "auto") {
+              this.applyPosition({left: -b.left});
+            } else {
+              this.applyPosition({right: b.left});
+            }
+          }
+        }
+      }
+    },
+    /**
+      @param {String} key The name of the attribute that we're going to display
+      @param {String} value The value of the input box that we use to filter the results
+      @param {Array} models All the models
+      @param {String} sidecarKey We allow a second attribute to be shown in the dropdown
+        that is not part of the input field.
+    */
+    buildList: function (key, value, models, sidecarKey, skipFilter) {
+      key = _.isString(key) ? [key] : key;
+      var regexp = new RegExp("^" + value, "i"),
+        model,
+        list,
+        item,
+        itemContent,
+        i,
+        n;
+      this.destroyClientControls();
+      if (models && models.length) {
+        list = skipFilter ? models : _.filter(models, function (model) {
+          for (n = 0; n &lt; key.length; n++) {
+            item = model.getValue(key[n]) || "";
+            if (item.match(regexp)) { return true; }
+          }
+          return false;
+        });
+
+        for (i = 0; i &lt; list.length; i++) {
+          model = list[i];
+          item = model.getValue(key[0]);
+          if (item) {
+            itemContent = model.getValue(key[0]);
+            if (sidecarKey) {
+              itemContent = itemContent +
+                " &lt;span class='xv-completer-sidecar'>[" +
+                model.getValue(sidecarKey) +
+                "]&lt;/span>";
+            }
+            this.createComponent({
+              content: itemContent,
+              allowHtml: true,
+              model: model
+            });
+          }
+        }
+        this.render();
+      }
+    }
+  });
+
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.DocumentAssignmentsMixin.html">DocumentAssignmentsMixin</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jul 30 2014 22:58:38 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
