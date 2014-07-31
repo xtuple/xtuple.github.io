@@ -1,1 +1,0 @@
-This is a status update feed. This will function as a sort of internal blog for all things xTuple WSG and eCommerce. We will post updates to projects, progress on products, info about clients and meetings, and additional business related information on this page.
