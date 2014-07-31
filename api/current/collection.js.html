@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: backbone-x/source/collection.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: backbone-x/source/collection.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint indent:2, curly:true, eqeqeq:true, immed:true, latedef:true,
+newcap:true, noarg:true, regexp:true, undef:true, strict:true, trailing:true,
+white:true*/
+/*global XT:true, XM:true, Backbone:true, _:true, console:true */
+
+(function () {
+  "use strict";
+
+  /**
+    @class `XM.Collection` is a standard class for querying the xTuple data source.
+    It should be subclassed for use with subclasses of `XM.Model` (which
+    themselves typically exist in the `XM` namespace). To create a new class,
+    simply extend `XM.Collection` and indicate the model to reference:
+    &lt;pre>&lt;code>
+      XM.MyCollection = XM.Collection.extend({
+        model: XM.MyModel
+      })
+    &lt;/code>&lt;/pre>
+    After your class is created, you can instantiate one and call `fetch` to
+    retrieve all records of that type.
+    &lt;pre>&lt;code>
+      var coll = new XM.MyCollection();
+      coll.fetch();
+    &lt;/code>&lt;/pre>
+    You can access the results on the `models` array.
+    &lt;pre>&lt;code>
+      coll.models;
+    &lt;/code>&lt;/pre>
+    You can specify options in fetch including `success` and `query` options.
+    The `success` option is the callback executed when `fetch` sucessfully
+    completes.
+    &lt;pre>&lt;code>
+      var options = {
+        success: function () {
+          console.log('Fetch completed!')
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    Use a query object to limit the result set. For example, this query will return results
+    with the first name 'Frank' and last name 'Farley':
+    &lt;pre>&lt;code>
+      var coll = new XM.ContactListItemCollection();
+      var options = {
+        query: {
+          parameters: [{
+            attribute: "firstName",
+            value: "Mike"
+          }, {
+            attribute: "lastName",
+            value: "Farley"
+          }]
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    The `query` object supports the following:&lt;pre>
+      &#42; parameters - Array of objects describing what to filter on.
+        Supports the following properties:
+        > attribute - The name of the attribute to filter on.
+        > operator - The operator to perform comparison on.
+        > value - The matching value.
+        > includeNull - "OR" include the row if the attribute is null irrespective
+          of whether the operator matches.
+      &#42; orderBy - Array of objects designating sort order. Supports
+        the following properties:
+        > attribute - Attribute to sort by.
+        > descending - `Boolean` value. If false or absent sort ascending.
+      &#42; rowLimit - Maximum rows to return.
+      &#42; rowOffset - Result offset. Always use together with `orderBy`.
+    &lt;/pre>
+    If no operator is provided in a parameter object, the default will be `=`.
+    Supported operators include:&lt;pre>
+      - `=`
+      - `!=`
+      - `&lt;`
+      - `&lt;=`
+      - `>`
+      - `>=`
+      - `BEGINS_WITH` -- (checks if a string starts with another one)
+      - `ENDS_WITH` --   (checks if a string ends with another one)
+      - `MATCHES` --     (checks if a string is matched by a case insensitive regexp)
+      - `ANY` --         (checks if the number or text on the left is contained in the array
+                         on the right)
+      - `NOT ANY` --     (checks if the number or text on the left is not contained in the array
+                        on the right)&lt;/pre>
+    &lt;h5>Examples&lt;/h5>
+    Example: Fetch the first 10 Contacts ordered by last name, then first name.
+    &lt;pre>&lt;code>
+      var coll = new XM.ContactListItemCollection();
+      var options = {
+        query: {
+          rowLimit: 10,
+          orderBy: [{
+            attribute: "lastName"
+          }, {
+            attribute: "firstName"
+          }]
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    Example: Fetch Contacts with 'Frank' in the name.
+    &lt;pre>&lt;code>
+      var coll = new XM.ContactListItemCollection();
+      var options = {
+        query: {
+          parameters:[{
+            attribute: "name",
+            operator: "MATCHES",
+            value: "Frank"
+          }],
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    Example: Fetch Accounts in Virginia ordering by Contact name descending. Note
+    support for querying object hierarchy paths.
+    &lt;pre>&lt;code>
+      var coll = new XM.AccountListItemCollection();
+      var options = {
+        query: {
+          parameters:[{
+            attribute: "primaryContact.address.state",
+            value: "VA"
+          }],
+          orderBy: [{
+            attribute: "primaryContact.name",
+            descending: true
+          }]
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    Example: Fetch Items with numbers starting with 'B'.
+    &lt;pre>&lt;code>
+      var coll = new XM.ItemListItemCollection();
+      var options = {
+        query: {
+          parameters:[{
+            attribute: "number",
+            operator: "BEGINS_WITH",
+            value: "B"
+          }]
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    Example: Fetch active To Do items due on or after July 17, 2009.
+    &lt;pre>&lt;code>
+      var coll = new XM.ToDoListItemCollection();
+      var dt = new Date();
+      dt.setMonth(7);
+      dt.setDate(17);
+      dt.setYear(2009);
+      var options = {
+        query: {
+          parameters:[{
+            attribute:"dueDate",
+            operator: ">=",
+            value: dt
+          }, {
+            attribute: "isActive",
+            value: true
+          }]
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    Example: Fetch contact(s) with an account number, account name, (contact) name,
+    phone, or city matching 'ttoys' and a first name beginning with 'M'. Note
+    an attribute array uses `OR` logic for comparison against all listed
+    attributes.
+    &lt;pre>&lt;code>
+      var coll = new XM.ContactListItemCollection();
+      var options = {
+        query: {
+          parameters:[{
+            attribute: ["account.number", "account.name", "name", "phone", "address.city"],
+            operator: "MATCHES",
+            value: "ttoys"
+          }, {
+            attribute: "firstName",
+            operator: "BEGINS_WITH",
+            value: "M"
+          }]
+        }
+      };
+      coll.fetch(options);
+    &lt;/code>&lt;/pre>
+    @name XM.Collection
+    @extends Backbone.Collection
+    */
+  XM.Collection = Backbone.Collection.extend(/** @lends XM.Collection# */{
+
+    /**
+      If true forwards a `post` dispatch request to the server against a
+      function named "fetch" on the recordType name of the collection's model.
+      Otherwise calls `get` against the same.
+
+      This makes it easy to re-route fetch calls to functions that may have
+      much more complex logic than the normal `get` methodology and related
+      crud methods can support.
+
+      @default false
+    */
+    dispatch: false,
+
+    fetchCount: 0,
+
+    /**
+      Handle status change.
+      #refactor XXX just by calling collection.add(new Model()), my new model
+      becomes magically READY_CLEAN instead of EMPTY or READY_NEW ??
+    */
+    add: function (models, options) {
+      options = options = _.extend({ merge: true }, options);
+      var result = Backbone.Collection.prototype.add.call(this, models, options),
+        i,
+        K = XM.Model;
+
+      _.each(result.models, function (model) {
+        model.setStatus(options.status || K.READY_CLEAN, {cascade: true, ignoreStatusChange: true});
+      });
+      return result;
+    },
+
+    /**
+      Syncs the collection with the changed model.
+
+      @this An instance of a collection
+     */
+    autoSync: function (model, status) {
+      var cachedModel;
+
+      // These model statuses change a lot, and it is difficult to come with a set of
+      // statuses to trigger the cache sync that would get hit every time that it needed
+      // to, but never needlessly. The rule right now is that if the model is DESTROYED_DIRTY,
+      // or if it's in the READY_CLEAN that *follows* a BUSY_COMMITTING, then the cache should
+      // be refreshed.
+
+      // An extra quirk is that if the model is added by a list relations editor box
+      // (e.g. ProjectVersion) there might be multiple ids that need to be set into the cache
+      // when the parent model is being saved. This code remembers ALL of the models that are
+      // in BUSY_COMMITTING, and then can recache each of them as they come back READY_CLEAN
+      //
+      if (status === XM.Model.BUSY_COMMITTING) {
+        this._busyCommittingIds = this._busyCommittingIds || [];
+        this._busyCommittingIds.push(model.id);
+      }
+
+      if ((status === XM.Model.READY_CLEAN && _.contains(this._busyCommittingIds, model.id)) ||
+          status === XM.Model.DESTROYED_DIRTY) {
+
+        this._busyCommittingIds = _.without(this._busyCommittingIds, model.id);
+        cachedModel = _.find(this.models, function (m) {
+          return m.id === model.id;
+        });
+
+        // perform the sync by removing the model if it's already in the collection,
+        // and adding it unless it is being deleted.
+        if (cachedModel) {
+          this.remove(cachedModel);
+        }
+        if (status !== XM.Model.DESTROYED_DIRTY && !this.get(model.id)) {
+          this.add(model);
+        }
+      }
+    },
+
+    /**
+      Convenience wrapper for the backbone-relational function by the same name.
+     */
+    getObjectByName: function (name) {
+      return Backbone.Relational.store.getObjectByName(name);
+    },
+
+    /**
+      Return the current status.
+
+      @returns {Number}
+    */
+    getStatus: function () {
+      return this.status;
+    },
+
+    /**
+     * Retrieve records from the xTuple data source.
+     * Optionally retrieve a subset by passing query parameters.
+     */
+    fetch: function (options) {
+      //
+      // Use default order attribute if it's specified and if no options are specified
+      // TODO: we should apply the default ordering even in the presence of options
+      // so long as the options don't have an orderBy command
+      //
+      options = options ? _.clone(options) :
+        this.orderAttribute ? { query: this.orderAttribute } : {};
+      var fetchIndex = this.fetchCount + 1,
+        success = options.success,
+        that = this;
+
+      this.fetchCount = fetchIndex;
+
+      if (options.parse === void 0) {
+        options.parse = true;
+      }
+      options.success = function (collection, resp, options) {
+        var data = resp;
+
+        // Bail if this query result has been superceded by another
+        if (fetchIndex &lt; that.fetchCount) { return; }
+
+        // Dispatched fetches come back with a different response profile.
+        // Fix it, Felix.
+        if (that.dispatch) {
+          data = collection;
+          options = resp;
+          collection = that;
+        }
+
+        var method = options.update ? 'update' : 'reset';
+        collection[method](data, options);
+        that.setStatus(XM.ModelClassMixin.READY_CLEAN);
+        if (success) {
+          success(collection, data, options);
+        }
+      };
+      this.setStatus(XM.ModelClassMixin.BUSY_FETCHING);
+      return this.sync('read', this, options);
+    },
+
+    initialize: function (attributes, options) {
+      var status = this.getStatus();
+
+      if (_.isNull(status)) {
+        this.setStatus(XM.ModelClassMixin.EMPTY);
+      }
+    },
+
+
+    /**
+      Set the status on the model. Triggers `statusChange` event.
+
+      @param {Number} Status
+    */
+    setStatus: function (status, options) {
+
+      if (this.status === status) { return; }
+      this._prevStatus = this.status;
+      this.status = status;
+
+      this.trigger('statusChange', this, status, options);
+      this.trigger('status:' + XM.Model._status[status], this, status, options);
+      return this;
+    },
+
+    /**
+      Sync to xTuple data source.
+    */
+    sync: function (method, model, options) {
+      var proto = model.model.prototype,
+        query = options.query || {},
+        payload = {
+          nameSpace: proto.recordType.replace(/\.\w+/i, ''),
+          type: proto.recordType.suffix(),
+        },
+        parameters = query.parameters;
+
+      // Clean up parameters
+      if (parameters && parameters.length) {
+        XM.Collection.formatParameters(proto.recordType, parameters);
+      }
+
+
+      if (method === 'read' && options.success) {
+        if (this.dispatch) {
+          method = "post";
+          payload.dispatch = {
+            functionName: "fetch",
+            parameters: query
+          };
+        } else {
+          method = "get";
+          payload.query = query;
+        }
+
+        return XT.dataSource.request(this, method, payload, options);
+      }
+
+      return false;
+    },
+
+    orderAttribute: null
+
+  });
+
+  /**
+    Helper function to convert parameters to data source friendly formats
+    @private
+    @param {String} Record Type
+    @param {Object} Query parameters
+  */
+  XM.Collection.formatParameters = function (recordType, params) {
+    _.each(params, function (param) {
+      var klass = recordType ? XT.getObjectByName(recordType) : null,
+        relations = klass ? klass.prototype.relations : [],
+        relation = _.find(relations, function (rel) {
+          return rel.key === param.attribute;
+        }),
+        idAttribute;
+
+      // Format date if applicable
+      if (param.value instanceof Date) {
+        param.value = param.value.toJSON();
+
+      // Format record if applicable
+      } else if (_.isObject(param.value) && !_.isArray(param.value)) {
+        param.value = param.value.id;
+      }
+
+      // Format attribute if it's `HasOne` relation
+      if (relation && relation.type === Backbone.HasOne && relation.isNested) {
+        klass = XT.getObjectByName(relation.relatedModel);
+        idAttribute = klass.prototype.idAttribute;
+        param.attribute = param.attribute + '.' + idAttribute;
+      }
+    });
+  };
+
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.DocumentAssignmentsMixin.html">DocumentAssignmentsMixin</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jul 30 2014 22:58:38 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

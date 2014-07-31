@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: enyo-x/source/views/grid_box.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: enyo-x/source/views/grid_box.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>  /*jshint bitwise:false, indent:2, curly:true, eqeqeq:true, immed:true,
+latedef:true, newcap:true, noarg:true, regexp:true, undef:true,
+trailing:true, white:true, strict: false*/
+/*global XT:true, XM:true, XV:true, _:true, enyo:true, Globalize:true*/
+
+(function () {
+  var _events = "change readOnlyChange statusChange",
+    _readOnlyHeight = 57;
+
+  // TODO: picker onblur
+  // http://forums.enyojs.com/discussion/1578/picker-onblur#latest
+
+  /**
+    @name XV.GridAttr
+    @class Holds the data within the cell of a row of a grid.&lt;br />
+  */
+  enyo.kind(/** @lends XV.GridAttr# */{
+    name: "XV.GridAttr",
+    classes: "xv-grid-attr",
+    published: {
+      attr: "",
+      isKey: false,
+      isLayout: false,
+      placeholder: null
+    }
+  });
+
+  /**
+    @name XV.Column
+    @class Represents a column within the read only section of a grid.
+  */
+  enyo.kind(/** @lends XV.Column# */{
+    name: "XV.GridColumn",
+    classes: "xv-grid-column"
+  });
+
+  /**
+    @name XV.GridRow
+    @class Represents a row within the read only section of a grid.
+
+  */
+  var readOnlyRow = enyo.mixin(/** @lends XV.GridRow# */{
+    name: "XV.GridRow",
+    classes: "xv-grid-row readonly",
+    published: {
+      value: null,
+      columns: null
+    },
+
+    create: function () {
+      this.inherited(arguments);
+      this.columnsChanged();
+    },
+
+    columnsChanged: function () {
+      this.inherited(arguments);
+      var columns = this.getColumns() || [],
+        that = this;
+      _.each(columns, function (column) {
+        var components = [];
+
+        // Build component array
+        _.each(column.rows, function (row) {
+          components.push({
+            kind: "XV.GridAttr",
+            attr: row.readOnlyAttr || row.attr,
+            formatter: row.formatter,
+            placeholder: row.placeholder
+          });
+        });
+
+        that.createComponent({
+          kind: "XV.GridColumn",
+          classes: column.classes || "grid-item",
+          components: components
+        });
+      });
+    },
+    setValue: function (value) {
+      this.value = value;
+      this.valueChanged();
+    },
+    valueChanged: function () {
+      var model = this.getValue(),
+        that = this,
+        views = _.filter(this.$, function (view) {
+          return view.attr || view.formatter;
+        }),
+        handled = [];
+
+      if (!model) { return; }
+
+      // Loop through each view matched to an attribute and set the value
+      _.each(views, function (view) {
+        var prop = view.attr,
+          attr = prop.indexOf(".") > -1 ? prop.prefix() : prop,
+          isRequired = _.contains(model.requiredAttributes, attr),
+          value = model.getValue(view.attr),
+          type = model.getType(view.attr),
+          isNothing = _.isUndefined(value) || _.isNull(value) || value === "",
+          isError = isNothing && isRequired,
+          isPlaceholder = false;
+
+        // Set this first in case other formatting sets error
+        view.addRemoveClass("error", isError);
+
+        // Show "required" placeholder if necessary,
+        // but only once per top level attribute
+        if (isError) {
+          if (!_.contains(handled, attr)) {
+            value = _.contains(handled, attr) ? "" : "_required".loc();
+            handled.push(attr);
+          }
+
+        // Handle formatting if applicable
+        } else if (view.formatter) {
+          value = that[view.formatter](value, view, model);
+
+        // Handle placeholder if applicable
+        } else if (isNothing) {
+          value = view.placeholder || "";
+          isPlaceholder = true;
+
+        } else if (_.contains(that.formatted, type)) {
+          value = that["format" + type](value, view, model);
+        }
+        view.setContent(value);
+        view.addRemoveClass("placeholder", isPlaceholder);
+      });
+
+    }
+  }, XV.FormattingMixin);
+
+  enyo.kind(readOnlyRow);
+
+  /**
+    The editable row of a GridBox for grid entry.
+    @see XV.RelationsEditorMixin.
+  */
+  var editor = enyo.mixin({}, XV.RelationsEditorMixin);
+  editor = enyo.mixin(editor, /** @lends XV.GridEditor */{
+    name: "XV.GridEditor",
+    classes: "xv-grid-row selected",
+    published: {
+      columns: null,
+      value: null
+    },
+    addButtonKeyup: function (inSender, inEvent) {
+      inEvent.preventDefault();
+    },
+    create: function () {
+      this.inherited(arguments);
+      this.columnsChanged();
+    },
+    columnsChanged: function () {
+      this.inherited(arguments);
+      var that = this,
+        columns = this.getColumns() || [],
+        components = [];
+
+      // Loop through each column and build rows
+      _.each(columns, function (column) {
+
+        // Create the column
+        components.push({
+          classes: "xv-grid-column " + (column.classes || "grid-item"),
+          components: _.pluck(column.rows, "editor")
+        });
+      });
+
+      // Create the controls
+      components.push(
+        {classes: "xv-grid-column grid-actions", components: [
+          {components: [
+            {kind: "enyo.Button",
+              classes: "icon-plus xv-gridbox-button",
+              name: "addGridRowButton",
+              onkeypress: "addButtonKeyup",
+            },
+            {kind: "enyo.Button",
+              classes: "icon-folder-open xv-gridbox-button",
+              name: "expandGridRowButton" },
+            {kind: "enyo.Button",
+              classes: "icon-remove-sign xv-gridbox-button",
+              name: "deleteGridRowButton" }
+          ]}
+        ]}
+      );
+      this.createComponents(components, {owner: this});
+    },
+    keyUp: function (inSender, inEvent) {
+      if (inEvent.keyCode === XV.KEY_DOWN) {
+        this.doMoveDown(inEvent);
+        return true;
+      } else if (inEvent.keyCode === XV.KEY_UP) {
+        this.doMoveUp(inEvent);
+        return true;
+      } else if (inEvent.keyCode === XV.KEY_ENTER) {
+        this.doEnterOut(inEvent);
+        return true;
+      }
+    },
+    /**
+      The editor will select the first non-disabled widget it can.
+
+      @param {Object} Widget
+    */
+    setFirstFocus: function () {
+      var editors = [],
+        first;
+
+      _.each(this.children, function (column) {
+        editors = editors.concat(column.children);
+      });
+      first = _.find(editors, function (editor) {
+        return !editor.disabled && editor.focus;
+      });
+
+      if (first) { first.focus(); }
+    }
+  });
+  _.extend(editor.events, {
+      onMoveUp: "",
+      onMoveDown: "",
+      onEnterOut: ""
+    });
+  _.extend(editor.handlers, {
+      onkeyup: "keyUp"
+    });
+  enyo.kind(editor);
+
+  /**
+    Input system for grid entry
+    @extends XV.Groupbox
+   */
+  enyo.kind(
+  /** @lends XV.GridBox# */{
+    name: "XV.GridBox",
+    kind: "XV.Groupbox",
+    classes: "panel xv-grid-box",
+    events: {
+      onChildWorkspace: "",
+      onExportAttr:     ""
+    },
+    handlers: {
+      ontap: "buttonTapped",
+      onEnterOut: "enterOut",
+      onMoveUp: "moveUp",
+      onMoveDown: "moveDown"
+    },
+    published: {
+      attr: null,
+      disabled: null,
+      value: null,
+      editableIndex: null, // number
+      title: "",
+      columns: null,
+      editorMixin: null,
+      summary: null,
+      workspace: null,
+      parentKey: null,
+      gridRowKind: "XV.GridRow",
+      gridEditorKind: "XV.GridEditor",
+      orderBy: null
+    },
+    bindCollection: function () {
+      var that = this,
+        collection = this.getValue();
+      this.unbindCollection();
+      collection.once("add remove", this.valueChanged, this);
+      _.each(collection.models, function (model) {
+        model.on("change status:DESTROYED_DIRTY", that.refreshLists, that);
+      });
+    },
+    buildComponents: function () {
+      var that = this,
+        title = this.getTitle(),
+        columns = this.getColumns() || [],
+        header = [],
+        readOnlyRow = [],
+        summary = this.getSummary(),
+        components = [],
+        editorMixin = this.getEditorMixin() || {},
+        editorCreate = editorMixin.create,
+        editor,
+        gridRowKind = this.getGridRowKind(),
+        gridEditorKind = this.getGridEditorKind();
+
+      editor = enyo.mixin({
+        kind: gridEditorKind,
+        name: "editableGridRow",
+        showing: false,
+        columns: columns
+      }, editorMixin);
+
+      // Hack: because unfortunately some mixins have implemented create
+      // and it's too much work to untangle that right now
+      if (editorCreate) {
+        editor.create = function () {
+          editorCreate.apply(this, arguments);
+          this.columnsChanged();
+        };
+      }
+
+      // View Header
+      components.push({
+        kind: "onyx.GroupboxHeader",
+        content: title,
+        classes: "xv-grid-groupbox-header"
+      });
+
+      // Row Header
+      _.each(columns, function (column) {
+        var contents = _.isArray(column.header) ? column.header : [column.header],
+          components = [];
+
+        _.each(contents, function (content) {
+          components.push({
+            //classes: "xv-grid-header " + (column.classes || "grid-item"),
+            content: content
+          });
+        });
+
+        header.push({kind: "FittableRows", components: components,
+          classes: "xv-grid-header " + (column.classes || "grid-item")});
+      });
+
+      components.push({
+        classes: "xv-grid-row",
+        name: "gridHeader",
+        components: header
+      });
+
+      // Row Definition
+      components.push(
+        {kind: "XV.Scroller", name: "mainGroup", horizontal: "hidden", fit: true, components: [
+          {kind: "List", name: "aboveGridList", classes: "xv-above-grid-list",
+              onSetupItem: "setupRowAbove", ontap: "gridRowTapAbove", components: [
+            { kind: gridRowKind, name: "aboveGridRow", columns: columns}
+          ]},
+          editor,
+          {kind: "List", name: "belowGridList", classes: "xv-below-grid-list",
+              onSetupItem: "setupRowBelow", ontap: "gridRowTapBelow", components: [
+            {kind: gridRowKind, name: "belowGridRow", columns: columns}
+          ]}
+        ]}
+      );
+
+      components.push({
+        kind: "FittableColumns",
+        name: "navigationButtonPanel",
+        classes: "xv-buttons",
+        components: [
+          {kind: "onyx.Button", name: "newButton", ontap: "newItem", content: "_new".loc(),
+            classes: "icon-plus text"},
+          {kind: "onyx.Button", name: "exportButton", ontap: "exportAttr",
+            classes: "icon-share text", content: "_export".loc()}
+        ]
+      });
+
+      // Summary
+      if (summary) {
+        components.push({
+          kind: summary,
+          name: "summaryPanel"
+        });
+      }
+
+      return components;
+    },
+    create: function () {
+      this.inherited(arguments);
+      this.createComponents(this.buildComponents());
+    },
+    buttonTapped: function (inSender, inEvent) {
+      var editor = this.$.editableGridRow,
+        model,
+        that = this,
+        success;
+
+      switch (inEvent.originator.name) {
+      case "addGridRowButton":
+        this.newItem();
+        break;
+      case "deleteGridRowButton":
+        // note that can't remove the model from the middle of the collection w/o error
+        // we just destroy the model and hide the row.
+        model = inEvent.originator.parent.parent.parent.value; // XXX better ways to do this
+        model.destroy({
+          success: function () {
+            that.setEditableIndex(null);
+            that.$.editableGridRow.hide();
+            that.valueChanged();
+          }
+        });
+        break;
+      case "expandGridRowButton":
+        model = inEvent.originator.parent.parent.parent.value; // XXX better ways to do this
+        this.unbindCollection();
+        editor.value.off("notify", editor.notify, editor);
+        this.doChildWorkspace({
+          workspace: this.getWorkspace(),
+          collection: this.getValue(),
+          index: this.getValue().indexOf(model),
+          callback: function () {
+            editor.value.on("notify", editor.notify, editor);
+            that.bindCollection();
+          }
+        });
+        break;
+      }
+    },
+    destroy: function () {
+      var model = this.value[this.getParentKey()];
+      model.off("status:READY_CLEAN", this.reset, this);
+      this.unbindCollection();
+      this.inherited(arguments);
+    },
+    /**
+     Propagate down disability to widgets.
+     */
+    disabledChanged: function () {
+      this.$.newButton.setDisabled(this.getDisabled());
+    },
+    /*
+      When a user taps the grid row we open it up for editing
+    */
+    gridRowTapAbove: function (inSender, inEvent) {
+      this.gridRowTapEither(inEvent.index, 0);
+    },
+    gridRowTapBelow: function (inSender, inEvent) {
+      this.gridRowTapEither(inEvent.index, this.getEditableIndex() + 1);
+    },
+    gridRowTapEither: function (index, indexStart, firstFocus) {
+      firstFocus = firstFocus !== false;
+      var editableIndex = index + indexStart,
+        belowListCount = this.getValue().length - editableIndex - 1,
+        editor = this.$.editableGridRow;
+
+      if (this.getDisabled()) {
+        // read-only means read-only
+        return;
+      }
+      if (index === undefined) {
+        // tap somewhere other than a row item
+        return;
+      }
+      this.setEditableIndex(editableIndex);
+      this.$.aboveGridList.setCount(editableIndex);
+      this.$.aboveGridList.render();
+      // XXX hack. not sure why the port doesn't know to resize down
+      this.$.aboveGridList.$.port.applyStyle("height", (_readOnlyHeight * this.liveModels(editableIndex - 1).length) + "px");
+      editor.setValue(this.getValue().at(editableIndex));
+      if (!editor.showing) {
+        editor.show();
+        editor.render();
+      }
+      if (firstFocus) {
+        editor.setFirstFocus();
+      }
+      this.$.belowGridList.setCount(belowListCount);
+      this.$.belowGridList.render();
+      // XXX hack. not sure why the port doesn't know to resize down
+      this.$.belowGridList.$.port.applyStyle("height", (_readOnlyHeight * belowListCount) + "px");
+    },
+    /**
+      Get all the models that are not destroyed, up through optional maxIndex parameter
+    */
+    liveModels: function (maxIndex) {
+      return _.compact(_.map(this.getValue().models, function (model, index) {
+        if (maxIndex !== undefined && index > maxIndex) {
+          return null;
+        } else if (model.isDestroyed()) {
+          return null;
+        } else {
+          return model;
+        }
+      }));
+    },
+    moveDown: function (inSender, inEvent) {
+      var outIndex = this.getEditableIndex(),
+        rowCount = this.getValue().length,
+        wrap = inEvent.wrap === true,
+        i;
+
+      if (wrap && outIndex + 1 === rowCount) {
+        this.newItem();
+      } else {
+        // go to the next live row, as if it had been tapped
+        for (i = outIndex + 1; i &lt; this.getValue().length; i++) {
+          if (!this.getValue().at(i).isDestroyed()) {
+            this.gridRowTapEither(i, 0, wrap);
+            break;
+          }
+        }
+      }
+    },
+    moveUp: function (inSender, inEvent) {
+      var outIndex = this.getEditableIndex(),
+        firstFocus = inEvent.firstFocus === true,
+        i;
+
+      if (outIndex >= 0) {
+        // go to the next live row, as if it had been tapped
+        for (i = outIndex - 1; i >= 0; i--) {
+          if (!this.getValue().at(i).isDestroyed()) {
+            this.gridRowTapEither(i, 0, firstFocus);
+            break;
+          }
+        }
+      }
+    },
+    /*
+      Add a row to the grid
+    */
+    newItem: function () {
+      var editableIndex = this.getValue().length,
+        aboveListCount = this.liveModels(editableIndex - 1).length,
+        Klass = this.getValue().model,
+        model = new Klass(null, {isNew: true}),
+        editor = this.$.editableGridRow;
+
+      this.getValue().add(model, {status: XM.Model.READY_NEW});
+      this.setEditableIndex(editableIndex);
+      this.valueChanged();
+      // XXX hack. not sure why the port doesn't know to resize down
+      this.$.aboveGridList.$.port.applyStyle("height", (_readOnlyHeight * aboveListCount) + "px");
+      editor.setValue(model);
+      editor.show();
+      editor.render();
+      editor.setFirstFocus();
+    },
+    exportAttr: function (inSender, inEvent) {
+      var gridbox = this;
+      this.doExportAttr({ attr: gridbox.attr });
+    },
+    refreshLists: function () {
+      this.$.aboveGridList.refresh();
+      this.$.belowGridList.refresh();
+    },
+    reset: function () {
+      this.setEditableIndex(null);
+      this.valueChanged();
+    },
+    setupRowAbove: function (inSender, inEvent) {
+      this.setupRowEither(inEvent.index, this.$.aboveGridRow, 0);
+    },
+    setupRowBelow: function (inSender, inEvent) {
+      this.setupRowEither(inEvent.index, this.$.belowGridRow, this.getEditableIndex() + 1);
+    },
+    setupRowEither: function (index, gridRow, indexStart) {
+      var that = this,
+        model = this.getValue().at(indexStart + index);
+
+      // set the contents of the row
+      gridRow.setValue(model);
+      gridRow.setShowing(model && !model.isDestroyed());
+
+      return true;
+    },
+    enterOut: function (inSender, inEvent) {
+      inEvent.wrap = true;
+      this.moveDown(inSender, inEvent);
+    },
+    unbindCollection: function () {
+      var collection = this.getValue(),
+        that = this;
+
+      collection.off("add remove", this.valueChanged, this);
+      _.each(collection.models, function (model) {
+        model.off("change status:DESTROYED_DIRTY", that.refreshLists, that);
+      });
+    },
+    setValue: function (value) {
+      var orderBy = this.getOrderBy(),
+        collection;
+      this._setProperty("value", value, "valueChanged");
+
+      collection = value;
+      if (orderBy && !collection.comparator) {
+        collection.comparator = function (a, b) {
+          var aval,
+            bval,
+            attr,
+            i;
+          for (i = 0; i &lt; orderBy.length; i++) {
+            attr = orderBy[i].attribute;
+            aval = orderBy[i].descending ? b.getValue(attr) : a.getValue(attr);
+            bval = orderBy[i].descending ? a.getValue(attr) : b.getValue(attr);
+            aval = !isNaN(aval) ? aval - 0 : aval;
+            bval = !isNaN(aval) ? bval - 0 : bval;
+            if (aval !== bval) {
+              return aval > bval ? 1 : -1;
+            }
+          }
+          return 0;
+        };
+      }
+      if (orderBy) {
+        collection.sort();
+      }
+    },
+    valueChanged: function () {
+      var that = this,
+        collection = this.getValue(),
+        model = this.value[this.getParentKey()];
+
+      // Make sure lists refresh if data changes
+      this.bindCollection();
+      this.$.aboveGridList.setCount(this.getEditableIndex() !== null ? this.getEditableIndex() : this.getValue().length);
+      // XXX hack. not sure why the port doesn't know to resize down
+      this.$.aboveGridList.$.port.applyStyle("height", (_readOnlyHeight * this.liveModels().length) + "px");
+      this.$.belowGridList.setCount(0);
+      this.$.belowGridList.$.port.applyStyle("height", "0px");
+      this.$.editableGridRow.setShowing(false);
+      this.$.aboveGridList.render();
+      this.$.editableGridRow.render();
+
+      // Should the model get saved and the server changed something
+      // come back here and reset things.
+      model.once("status:READY_CLEAN", this.reset, this);
+
+      // Update summary panel if applicable
+      if (this.$.summaryPanel) {
+        this.$.summaryPanel.setValue(model);
+      }
+    }
+  });
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.DocumentAssignmentsMixin.html">DocumentAssignmentsMixin</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jul 30 2014 22:58:38 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
