@@ -832,7 +832,9 @@ toolbox </dd>
 
 <p>Create a widget based on the name of the desired class. </p>
 <p>This is a wrapper around <a class="el" href="class_x_ui_loader.html#ae97b0f42994d9303a8c310751a961fc8">XUiLoader::createWidget</a>.</p>
-<p>The following example creates a new <a class="elRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qpushbutton.html">QPushButton</a>:  <div class="fragment"></div><!-- fragment --></p>
+<p>The following example creates a new <a class="elRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qpushbutton.html">QPushButton</a>:  <div class="fragment"><div class="line">var _expand = toolbox.createWidget(<span class="stringliteral">&quot;QPushButton&quot;</span>,   mywindow, <span class="stringliteral">&quot;_expand&quot;</span>);</div>
+<div class="line">var _collapse = toolbox.createWidget(<span class="stringliteral">&quot;QPushButton&quot;</span>, mywindow, <span class="stringliteral">&quot;_collapse&quot;</span>);</div>
+</div><!-- fragment --></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">className</td><td>The name of the class of the desired widget </td></tr>
@@ -1068,7 +1070,26 @@ XSqlQuery </dd>
 <p>This loads a query string from the <code>metasql</code> table in the xTuple ERP database. The given ParameterList controls parsing of the string to generate the actual query to execute.</p>
 <p>This method executes the query but the caller is responsible for navigating the results and checking for errors.</p>
 <p>The following scripted example creates a ParameterList <code>params</code>, populates it with the number of days preauthorized credit card charges are configured to be valid (defaults to 7) and defines some standard text values to display instead of internal codes (e.g. <code>Preauthorization</code>), then queries the database for a list of credit card transactions. The query itself it taken from the <code>metasql</code> table where the <code>metasql_group</code> is <code>ccpayments</code> and the <code>metasql_name</code> is <code>list</code>. The results are then used to populate an <a class="el" href="class_x_tree_widget.html">XTreeWidget</a>.</p>
- <div class="fragment"></div><!-- fragment --></p>
+ <div class="fragment"><div class="line"><span class="keyword">function</span> sPopulateTransactions()</div>
+<div class="line">{</div>
+<div class="line">  var params = <span class="keyword">new</span> Object;</div>
+<div class="line"></div>
+<div class="line">  params.preauth        = <span class="stringliteral">&quot;Preauthorization&quot;</span>;</div>
+<div class="line">  params.charge         = <span class="stringliteral">&quot;Charge&quot;</span>;</div>
+<div class="line">  params.refund         = <span class="stringliteral">&quot;Refund/Credit&quot;</span>;</div>
+<div class="line">  params.authorized     = <span class="stringliteral">&quot;Authorized&quot;</span>;</div>
+<div class="line">  params.approved       = <span class="stringliteral">&quot;Approved&quot;</span>;</div>
+<div class="line">  params.declined       = <span class="stringliteral">&quot;Declined/Denied&quot;</span>;</div>
+<div class="line">  params.voided         = <span class="stringliteral">&quot;Voided&quot;</span>;</div>
+<div class="line">  params.noapproval     = <span class="stringliteral">&quot;Not Approved&quot;</span>;</div>
+<div class="line">  <span class="keywordflow">if</span> (metrics.value(<span class="stringliteral">&quot;CCValidDays&quot;</span>) &gt; 0)</div>
+<div class="line">    params.ccValidDays  = metrics.value(<span class="stringliteral">&quot;CCValidDays&quot;</span>);</div>
+<div class="line">  <span class="keywordflow">else</span></div>
+<div class="line">    params.ccValidDays  = 7;</div>
+<div class="line"></div>
+<div class="line">  _transactions.populate(toolbox.executeDbQuery(<span class="stringliteral">&quot;ccpayments&quot;</span>, <span class="stringliteral">&quot;list&quot;</span>, params));</div>
+<div class="line">}</div>
+</div><!-- fragment --></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">%group</td><td>The metasql_group value to use when searching for this query </td></tr>
@@ -1110,8 +1131,17 @@ XSqlQuery </dd>
 
 <p>Execute a simple database query. </p>
 <p>The passed-in string is sent to the database engine for execution. The resulting XSqlQuery object is returned. The calling script is responsible for navigating the results, including reading the query results and checking for errors.</p>
-<p>For example, let's say you want a warning every day when you log in about currencies with missing exchange rates. The following lines check the database for currencies that do not have exchange rates defined for today:  <div class="fragment"></div><!-- fragment --></p>
-<p>Now the script must loop through the results to inform you of each row found: <div class="fragment"></div><!-- fragment --></p>
+<p>For example, let's say you want a warning every day when you log in about currencies with missing exchange rates. The following lines check the database for currencies that do not have exchange rates defined for today:  <div class="fragment"><div class="line">var fxqry = toolbox.executeQuery(<span class="stringliteral">&quot;SELECT curr_abbr, curr_rate &quot;</span></div>
+<div class="line">                               + <span class="stringliteral">&quot;  FROM curr_symbol LEFT OUTER JOIN&quot;</span></div>
+<div class="line">                               + <span class="stringliteral">&quot;       curr_rate ON (curr_symbol.curr_id=curr_rate.curr_id&quot;</span></div>
+<div class="line">                               + <span class="stringliteral">&quot;                 AND CURRENT_DATE BETWEEN curr_effective AND curr_expires + 1)&quot;</span></div>
+<div class="line">                               + <span class="stringliteral">&quot; WHERE curr_rate IS NULL;&quot;</span>);</div>
+</div><!-- fragment --></p>
+<p>Now the script must loop through the results to inform you of each row found: <div class="fragment"><div class="line"><span class="keywordflow">while</span> (fxqry.next())</div>
+<div class="line">  <a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html">QMessageBox</a>.<a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html#warning">warning</a>(mainwindow, qsTr(<span class="stringliteral">&quot;No exchange rate&quot;</span>),</div>
+<div class="line">                     qsTr(<span class="stringliteral">&quot;%1 has no exchange rate for today.&quot;</span>)</div>
+<div class="line">                       .arg(fxqry.value(<span class="stringliteral">&quot;curr_abbr&quot;</span>)));</div>
+</div><!-- fragment --></p>
 <p>Without this loop, the script would have asked the database for the missing exchange rates but nothing would have been done with the results.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1162,7 +1192,21 @@ XSqlQuery </dd></dl>
 <p>The passed-in string is processed as a MetaSQL query and then sent to the database engine for execution. The given ParameterList controls parsing of the string to generate the actual query to execute.</p>
 <p>This method executes the query but the caller is responsible for navigating the results and checking for errors.</p>
 <p>The following scripted example creates a ParameterList <code>params</code>, sets the <code>site</code> parameter to the internal id of the currently selected <code>_site</code> widget, then queries the database for a list of items associated with that itemsite. The results are then used to populate an <a class="el" href="class_x_tree_widget.html">XTreeWidget</a>.</p>
- <div class="fragment"></div><!-- fragment --></p>
+ <div class="fragment"><div class="line"><span class="keyword">function</span> sFillList()</div>
+<div class="line">{</div>
+<div class="line">  var params = <span class="keyword">new</span> Object;</div>
+<div class="line">  params.site = _site.id();</div>
+<div class="line"></div>
+<div class="line">  var qry = toolbox.executeQuery(<span class="stringliteral">&#39;SELECT item_id, itemsite_id, item_number, &#39;</span></div>
+<div class="line">                               + <span class="stringliteral">&#39;       itemsite_loccntrl, itemsite_controlmethod &#39;</span></div>
+<div class="line">                               + <span class="stringliteral">&#39;FROM itemsite &#39;</span></div>
+<div class="line">                               + <span class="stringliteral">&#39;     JOIN item ON (itemsite_item_id=item_id) &#39;</span></div>
+<div class="line">                               + <span class="stringliteral">&#39;WHERE itemsite_warehous_id=&lt;? value(&quot;site&quot;) ?&gt; &#39;</span></div>
+<div class="line">                               + <span class="stringliteral">&#39;ORDER BY item_number;&#39;</span>,</div>
+<div class="line">                               params);</div>
+<div class="line">  _itemsite.populate(qry, <span class="keyword">true</span>);</div>
+<div class="line">}</div>
+</div><!-- fragment --></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">query</td><td>The MetaSQL string from which to build the query </td></tr>
@@ -4032,7 +4076,25 @@ XSqlQuery </dd>
 
 <p>Get the layout containing the given widget. </p>
 <p>Search the object hierarchy and find the smallest <a class="elRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qlayout.html">QLayout</a> that contains the given widget. This lets a script create a new <a class="elRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qwidget.html">QWidget</a> and insert it into the user interface near another widget.</p>
- <div class="fragment"></div><!-- fragment --></p>
+ <div class="fragment"><div class="line">var _expand = toolbox.createWidget(<span class="stringliteral">&quot;QPushButton&quot;</span>,   mywindow, <span class="stringliteral">&quot;_expand&quot;</span>);</div>
+<div class="line">var _collapse = toolbox.createWidget(<span class="stringliteral">&quot;QPushButton&quot;</span>, mywindow, <span class="stringliteral">&quot;_collapse&quot;</span>);</div>
+<div class="line"></div>
+<div class="line"><span class="comment">/* Set the text of those buttons.</span></div>
+<div class="line"><span class="comment">   qsTr allows the text to be translated while the &amp; creates a hotkey</span></div>
+<div class="line"><span class="comment">   that can be used to click the button from the keyboard.</span></div>
+<div class="line"><span class="comment"> */</span></div>
+<div class="line">_expand.text   = qsTr(<span class="stringliteral">&quot;E&amp;xpand All&quot;</span>);</div>
+<div class="line">_collapse.text = qsTr(<span class="stringliteral">&quot;C&amp;ollapse All&quot;</span>);</div>
+<div class="line"></div>
+<div class="line"><span class="comment">// To position the new buttons, first find the layout container that holds _list</span></div>
+<div class="line">var _layout = toolbox.widgetGetLayout(_list);</div>
+<div class="line"></div>
+<div class="line"><span class="comment">/* _layout happens to be a QGridLayout and _list is in row 2, column 0. To put</span></div>
+<div class="line"><span class="comment">   _expand and _collapse under _list, we place them in rows 3 and 4, col 0.</span></div>
+<div class="line"><span class="comment"> */</span></div>
+<div class="line">_layout.addWidget(_expand,   3, 0);</div>
+<div class="line">_layout.addWidget(_collapse, 4, 0);</div>
+</div><!-- fragment --></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">w</td><td>The widget whose layout you want to find</td></tr>
@@ -4051,7 +4113,7 @@ XSqlQuery </dd>
   <hr size="1">
   <table width="100%">
     <tr>
-      <td width="33%" style="text-align: left;"> Generated on Wed Nov 12 2014 14:49:38 </td>
+      <td width="33%" style="text-align: left;"> Generated on Wed Nov 19 2014 10:14:50 </td>
       <td width="34%" style="text-align: center;"> xTuple ERP Programmer Reference, Version 4.8.0 </td>
       <td width="33%" style="text-align: right;">
         <a href="http://www.doxygen.org/index.html">
