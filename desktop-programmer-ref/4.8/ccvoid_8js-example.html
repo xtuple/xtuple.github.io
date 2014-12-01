@@ -11,7 +11,6 @@
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="examples.html"><span>Examples</span></a></li>
     </ul>
   </div>
@@ -84,11 +83,11 @@
 <div class="line">  toolbox.listProperties(authenticator);</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keyword">function</span> sHandleSslError(reply, <a name="a5"></a><a class="code" href="stored_proc_error_lookup_8cpp.html#a6186494f0067627eae94c82182e542d3">errors</a>)</div>
+<div class="line"><span class="keyword">function</span> sHandleSslError(reply, errors)</div>
 <div class="line">{</div>
 <div class="line">  print(<span class="stringliteral">&quot;sHandleSslError called&quot;</span>);</div>
 <div class="line">  toolbox.listProperties(reply);</div>
-<div class="line">  toolbox.listProperties(<a class="code" href="stored_proc_error_lookup_8cpp.html#a6186494f0067627eae94c82182e542d3">errors</a>);</div>
+<div class="line">  toolbox.listProperties(errors);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">function</span> sPopulateTransactions()</div>
@@ -112,7 +111,7 @@
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="comment">// convenience function to help build the message to send</span></div>
-<div class="line"><span class="keyword">function</span> <a name="a6"></a><a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(request, name, content)</div>
+<div class="line"><span class="keyword">function</span> APPENDFIELD(request, name, content)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (request != <span class="stringliteral">&quot;&quot;</span>)</div>
 <div class="line">    request = request + <span class="stringliteral">&quot;&amp;&quot;</span>;</div>
@@ -128,7 +127,7 @@
 <div class="line">    <span class="comment">// local error checks</span></div>
 <div class="line">    <span class="keywordflow">if</span> (_transactions.currentItem().text(<span class="stringliteral">&quot;status&quot;</span>) == <span class="stringliteral">&quot;Voided&quot;</span>)</div>
 <div class="line">    {</div>
-<div class="line">      <a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html">QMessageBox</a>.<a name="a7"></a><a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html#warning">warning</a>(mywindow, qsTr(<span class="stringliteral">&quot;Cannot Void&quot;</span>),</div>
+<div class="line">      <a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html">QMessageBox</a>.<a name="a5"></a><a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html#warning">warning</a>(mywindow, qsTr(<span class="stringliteral">&quot;Cannot Void&quot;</span>),</div>
 <div class="line">                          qsTr(<span class="stringliteral">&quot;This transaction cannot be voided a second time.&quot;</span>));</div>
 <div class="line">      <span class="keywordflow">return</span>;</div>
 <div class="line">    }</div>
@@ -184,57 +183,57 @@
 <div class="line">    var prequest = <span class="stringliteral">&quot;&quot;</span>;</div>
 <div class="line">    _currid = anq.value(<span class="stringliteral">&quot;ccpay_curr_id&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (metrics.value(<span class="stringliteral">&quot;CCANDelim&quot;</span>).length &gt; 0)</div>
-<div class="line">      prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_delim_char&quot;</span>, metrics.value(<span class="stringliteral">&quot;CCANDelim&quot;</span>));</div>
+<div class="line">      prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_delim_char&quot;</span>, metrics.value(<span class="stringliteral">&quot;CCANDelim&quot;</span>));</div>
 <div class="line"></div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_version&quot;</span>,      metrics.value(<span class="stringliteral">&quot;CCANVer&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_delim_data&quot;</span>, <span class="stringliteral">&quot;TRUE&quot;</span>);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_version&quot;</span>,      metrics.value(<span class="stringliteral">&quot;CCANVer&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_delim_data&quot;</span>, <span class="stringliteral">&quot;TRUE&quot;</span>);</div>
 <div class="line"></div>
 <div class="line">    <span class="keywordflow">if</span> (metrics.value(<span class="stringliteral">&quot;CCANEncap&quot;</span>).length &gt; 0)</div>
-<div class="line">      prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_encap_char&quot;</span>, metrics.value(<span class="stringliteral">&quot;CCANEncap&quot;</span>));</div>
+<div class="line">      prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_encap_char&quot;</span>, metrics.value(<span class="stringliteral">&quot;CCANEncap&quot;</span>));</div>
 <div class="line"></div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_login&quot;</span>,    metricsenc.value(<span class="stringliteral">&quot;CCLogin&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_tran_key&quot;</span>, metricsenc.value(<span class="stringliteral">&quot;CCPassword&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_amount&quot;</span>,   _transactions.column(<span class="stringliteral">&quot;ccpay_amount&quot;</span>).text);</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_card_num&quot;</span>, anq.value(<span class="stringliteral">&quot;ccard_number&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_test_request&quot;</span>, _ccp.isLive() ? <span class="stringliteral">&quot;FALSE&quot;</span> : <span class="stringliteral">&quot;TRUE&quot;</span>);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_login&quot;</span>,    metricsenc.value(<span class="stringliteral">&quot;CCLogin&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_tran_key&quot;</span>, metricsenc.value(<span class="stringliteral">&quot;CCPassword&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_amount&quot;</span>,   _transactions.column(<span class="stringliteral">&quot;ccpay_amount&quot;</span>).text);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_card_num&quot;</span>, anq.value(<span class="stringliteral">&quot;ccard_number&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_test_request&quot;</span>, _ccp.isLive() ? <span class="stringliteral">&quot;FALSE&quot;</span> : <span class="stringliteral">&quot;TRUE&quot;</span>);</div>
 <div class="line"></div>
 <div class="line">    var work_month = anq.value(<span class="stringliteral">&quot;ccard_month_expired&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (work_month &lt; 10 &amp;&amp; work_month &gt; 0)</div>
 <div class="line">      work_month = <span class="stringliteral">&quot;0&quot;</span> + work_month;</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_exp_date&quot;</span>,</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_exp_date&quot;</span>,</div>
 <div class="line">                           work_month + anq.value(<span class="stringliteral">&quot;ccard_year_expired&quot;</span>) % 100);</div>
 <div class="line"></div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_relay_response&quot;</span>, <span class="stringliteral">&quot;FALSE&quot;</span>);</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_duplicate_window&quot;</span>, metrics.value(<span class="stringliteral">&quot;CCANDuplicateWindow&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_relay_response&quot;</span>, <span class="stringliteral">&quot;FALSE&quot;</span>);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_duplicate_window&quot;</span>, metrics.value(<span class="stringliteral">&quot;CCANDuplicateWindow&quot;</span>));</div>
 <div class="line"></div>
 <div class="line">    var name = anq.value(<span class="stringliteral">&quot;ccard_name&quot;</span>).split(/\s+/);</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_first_name&quot;</span>, name[0]);</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_last_name&quot;</span>,  name[name.length - 1]);</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_company&quot;</span>,    anq.value(<span class="stringliteral">&quot;cust_name&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_address&quot;</span>,    anq.value(<span class="stringliteral">&quot;ccard_address1&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_city&quot;</span>,       anq.value(<span class="stringliteral">&quot;ccard_city&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_state&quot;</span>,      anq.value(<span class="stringliteral">&quot;ccard_state&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_zip&quot;</span>,        anq.value(<span class="stringliteral">&quot;ccard_zip&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_country&quot;</span>,    anq.value(<span class="stringliteral">&quot;ccard_country&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_first_name&quot;</span>, name[0]);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_last_name&quot;</span>,  name[name.length - 1]);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_company&quot;</span>,    anq.value(<span class="stringliteral">&quot;cust_name&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_address&quot;</span>,    anq.value(<span class="stringliteral">&quot;ccard_address1&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_city&quot;</span>,       anq.value(<span class="stringliteral">&quot;ccard_city&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_state&quot;</span>,      anq.value(<span class="stringliteral">&quot;ccard_state&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_zip&quot;</span>,        anq.value(<span class="stringliteral">&quot;ccard_zip&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_country&quot;</span>,    anq.value(<span class="stringliteral">&quot;ccard_country&quot;</span>));</div>
 <div class="line"></div>
 <div class="line">    <span class="keywordflow">if</span> (metrics.CCANWellsFargoSecureSource)</div>
 <div class="line">    {</div>
-<div class="line">      prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_phone&quot;</span>,    anq.value(<span class="stringliteral">&quot;cust_phone&quot;</span>));</div>
-<div class="line">      prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_email&quot;</span>,    anq.value(<span class="stringliteral">&quot;cust_email&quot;</span>));</div>
+<div class="line">      prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_phone&quot;</span>,    anq.value(<span class="stringliteral">&quot;cust_phone&quot;</span>));</div>
+<div class="line">      prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_email&quot;</span>,    anq.value(<span class="stringliteral">&quot;cust_email&quot;</span>));</div>
 <div class="line">    }</div>
 <div class="line"></div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_currency_code&quot;</span>, anq.value(<span class="stringliteral">&quot;curr_abbr&quot;</span>));</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_method&quot;</span>,        <span class="stringliteral">&quot;CC&quot;</span>);</div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_type&quot;</span>,          <span class="stringliteral">&quot;VOID&quot;</span>);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_currency_code&quot;</span>, anq.value(<span class="stringliteral">&quot;curr_abbr&quot;</span>));</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_method&quot;</span>,        <span class="stringliteral">&quot;CC&quot;</span>);</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_type&quot;</span>,          <span class="stringliteral">&quot;VOID&quot;</span>);</div>
 <div class="line">    </div>
-<div class="line">    prequest = <a class="code" href="authorizedotnetprocessor_8cpp.html#a6131a487bde902aa8cf109d087607aea">APPENDFIELD</a>(prequest, <span class="stringliteral">&quot;x_trans_id&quot;</span>,</div>
+<div class="line">    prequest = APPENDFIELD(prequest, <span class="stringliteral">&quot;x_trans_id&quot;</span>,</div>
 <div class="line">                           _ccp.isLive() ? anq.value(<span class="stringliteral">&quot;ccpay_r_ordernum&quot;</span>) : 12345);</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// post is asynchronous. while we&#39;re waiting, lock out the user so s/he doesn&#39;t try again</span></div>
 <div class="line">    _transactions.enabled = <span class="keyword">false</span>;</div>
 <div class="line">    _void.enabled         = <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">    var netreq = <span class="keyword">new</span> <a name="_a8"></a><a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qnetworkrequest.html">QNetworkRequest</a>();</div>
+<div class="line">    var netreq = <span class="keyword">new</span> <a name="_a6"></a><a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qnetworkrequest.html">QNetworkRequest</a>();</div>
 <div class="line">    netreq.setUrl(_url);</div>
 <div class="line"></div>
 <div class="line">    _netmgr.post(netreq, prequest);</div>
@@ -368,7 +367,7 @@
 <div class="line">      <span class="keywordflow">return</span>;</div>
 <div class="line">    }</div>
 <div class="line"></div>
-<div class="line">    <a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html">QMessageBox</a>.<a name="a9"></a><a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html#information">information</a>(mywindow, qsTr(<span class="stringliteral">&quot;Transaction Complete&quot;</span>),</div>
+<div class="line">    <a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html">QMessageBox</a>.<a name="a7"></a><a class="codeRef" doxygen="/usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags:http://qt-project.org/doc/qt-4.8/" href="http://qt-project.org/doc/qt-4.8/qmessagebox.html#information">information</a>(mywindow, qsTr(<span class="stringliteral">&quot;Transaction Complete&quot;</span>),</div>
 <div class="line">                       qsTr(<span class="stringliteral">&quot;&lt;p&gt;The ccpay table has been updated after &quot;</span></div>
 <div class="line">                          + <span class="stringliteral">&quot;completing the Void transaction.&quot;</span>));</div>
 <div class="line">    sPopulateTransactions();</div>
@@ -390,7 +389,7 @@
   <hr size="1">
   <table width="100%">
     <tr>
-      <td width="33%" style="text-align: left;"> Generated on Wed Nov 19 2014 10:14:04 </td>
+      <td width="33%" style="text-align: left;"> Generated on Mon Dec 1 2014 </td>
       <td width="34%" style="text-align: center;"> xTuple ERP Programmer Reference, Version 4.8.0 </td>
       <td width="33%" style="text-align: right;">
         <a href="http://www.doxygen.org/index.html">
