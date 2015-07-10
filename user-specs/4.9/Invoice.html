@@ -1,0 +1,3063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Business Object: Invoice</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Business Object: Invoice</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+    Definition
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Here is some high-level description of what an invoice is supposed to do.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+        <h3>Properties:</h3>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		
+		
+		
+		
+		
+		
+		<th class="last">Reference</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>number</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"> Next available Invoice Number will automatically display, unless your system requires you to enter Invoice Numbers manually. Default values and input parameters for Invoice Numbers are configurable at the system level.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invoiceDate</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"> By default, the current day's date will be entered.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isPosted</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isVoid</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>customer</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"> Enter the Customer Number of the Customer to be billed. The lookup feature located to the right of the field leads to a searchable Customers list. You may also access this list using the keyboard shortcut "CTRL + L". Once a Customer Number is entered, the Customer name and billing address will display. Select the "?" or "$" symbol to view Customer information for the specified Customer. If a Customer's credit is "In Good Standing," the button will feature a black question mark ("?" icon. If the icon turns to an orange dollar sign ("$"), the Customer's credit Status is "On Credit Warning." A red dollar sign ("$") indicates the Customer's credit Status is "On Credit Hold.")</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>billtoName</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>billtoAddress1</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Enter the Customer address where bills should be sent. By default, the billing address defined on the Customer master will be entered here.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>currency</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>terms</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Specify the billing Terms for the Invoice. By default, the Customer's standard billing terms will appear in the field.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>salesRep</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Specify the Sales Representative for the Invoice. By default, the Customer's designated Sales Representative will appear in the field.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>commission</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"> By default, the commission percentage recorded on the Customer master will be automatically entered in this field. If for some reason you select a non-default Sales Representative at Order entry, the commission rate will not change. To adjust the commission rate, you must make the change manually.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>saleType</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>customerPurchaseOrderNumber</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">PO #: Enter a Customer Purchase Order Number, as needed</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>taxZone</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Specify the Tax Zone for the Invoice. By default, the main Tax Zone for the Customer will appear in the field. The Ship-To Address Tax Zone will be shown if a Ship-To Address is being used.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>notes</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">This is a scrolling text field with word-wrapping for entering Notes related to the Invoice. Notes entered on this screen will follow the Invoice through the billing process. For example, you may view notes associated with a posted Invoice within the Invoice Information report.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>recurringInvoice</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>allocatedCredit</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">the sum of all allocated credits</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>outstandingCredit</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">the sum of all unallocated credits, not including
+      cash receipts pending</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>subtotal</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">the sum of the extended price of all line items</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>taxTotal</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">the sum of all taxes inluding line items, freight and
+      tax adjustments</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>miscCharge</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">read only will be re-implemented as editable by Ledger</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>total</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">the calculated total of subtotal + freight + tax + miscCharge</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>balance</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">the sum of total - allocatedCredit - authorizedCredit -
+      outstandingCredit.
+      - If sum calculates to less than zero, then the balance is zero.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>allocations</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Displays the monetary value of any Credit Memos and/or Credit Card charges which have been specifically allocated to the Invoice. To allocate Credit Memos to the Invoice, select the "Allocated C/M's" link.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>taxAdjustments</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>lineItems</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Display lists Line Items for this Invoice. A valid Customer Number must be entered in the "Customer #" field before Line Items can be added to the Order.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>characteristics</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>contacts</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>accounts</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>customers</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>files</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>urls</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>items</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>orderNumber</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"> Will display the relevant Sales Order Number for Invoices generated from the Select for Billing process flow. If the Invoice is miscellaneous and was not generated by the Select for Billing process, then use this field for informational or reference purposes. Possible references might include Sales Order Number or Customer Purchase Order Number.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>orderDate</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"> By default, the current day's date will be entered.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>documents</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+</dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h2 class="subsection-title">Related Information</h2>
+        
+        <dl>
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="Setup">Setup<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Used in the billing module
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="Privileges">Privileges<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Users can create, update, and delete invoices if they have the
+        MaintainMiscInvoices privilege.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Users can read invoices if they have the ViewMiscInvoices privilege.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="Settings">Settings<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Invoice is lockable.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The ID attribute is "number", which will be automatically uppercased.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>There is a setting "Valid Credit Card Days"
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy"><li>7</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Characteristics can be assigned as being for invoices
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Currency field should be read only after a line item is added to the invoice
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The invoice numbering policy can be determined by the user.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>When the customer changes, the billto information should be populated from
+          the customer, along with the salesRep, commission, terms, taxZone, and currency.
+          The billto fields will be read-only if the customer does not allow free-form billto.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>When currency or invoice date is changed outstanding credit should be
+          recalculated.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>AllocatedCredit should be recalculated when XM.InvoiceAllocation records
+          are added or removed.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>When invoice date is changed allocated credit should be recalculated.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>When subtotal, totalTax or miscCharge are changed, the total
+          should be recalculated.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>TotalTax should be recalculated when taxZone changes or
+          taxAdjustments are added or removed.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>When an invoice is loaded where "isPosted" is true, then the following
+          attributes will be made read only:
+          lineItems, number, invoiceDate, terms, salesrep, commission, taxZone, saleType
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Balance should be recalculated when total, allocatedCredit, or
+          outstandingCredit are changed.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>When allocatedCredit or lineItems exist, currency should become read only.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>To save, the invoice total must not be less than zero and there must be
+          at least one line item.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The invoice list should support multiple selections
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Invoice will include authorizedCredit, the sum of credit card authorizations
+          in the order currency where:
+            - The current_timestamp - authorization date is less than CCValidDays || 7
+            - The payment status the cc payment (ccpay) record is authorized ("A")
+            - The cc payment record is for an order number = the order number specified on
+              the invoice
+          When currency or invoice date is changed authorized credit should be recalculated.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>sales extension order date defaults to today
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The project attribute will be read-only for posted invoices
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>There is a setting "Valid Credit Card Days"
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy"><li>7</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="Buttons">Buttons<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The InvoiceList should be printable
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The InvoiceWorkspace should be printable
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The InvoiceWorkspace should be printable
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="Navigation">Navigation<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Users can perform the following actions from the list: Delete unposted
+          invoices where the user has the MaintainMiscInvoices privilege, Post unposted
+          invoices where the user has the "PostMiscInvoices" privilege, Void posted invoices
+          where the user has the "VoidPostedInvoices" privilege, Print invoice forms where
+          the user has the "PrintInvoices" privilege.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Supports grid-entry of line items on desktop browsers.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The bill to addresses available when searching addresses should filter
+          on the addresses associated with the customer's account record by default.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The customer search list should search only on active customers.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="Other">Other<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The invoice collection is not cached.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Invoice includes a function "calculateTax" that
+          Gathers line item, freight and adjustments
+          Groups by and sums and rounds to XT.MONEY_SCALE for each tax code
+          Sums the sum of each tax code and sets totalTax to the result
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>A child workspace view should exist called XV.InvoiceLineWorkspace
+          should include: all the attributes on XM.InvoiceLine, item cost and item list
+          price values, and a read only panel that displays a group box of lists of taxes.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The project widget will be added to the invoice workspace if the
+          UseProjects setting is true.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="InvoiceAllocation">InvoiceAllocation<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Invoice-level allocation information
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+        <h3>Properties:</h3>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		
+		
+		
+		
+		
+		
+		<th class="last">Reference</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>invoice</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>amount</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>currency</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+</dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="InvoiceCharacteristic">InvoiceCharacteristic<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Follows the convention for characteristics
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Characteristic.html">Characteristic</a></li>
+        </ul>
+    </dd>
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="InvoiceListItem">InvoiceListItem<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>List-view summary information for an invoice
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+        <h3>Properties:</h3>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		
+		
+		
+		
+		
+		
+		<th class="last">Reference</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>number</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isPrinted</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>customer</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invoiceDate</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>total</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isPosted</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isVoid</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>orderNumber</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Added by sales extension</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+</dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="InvoiceRelation">InvoiceRelation<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Summary information for an invoice
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+        <h3>Properties:</h3>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		
+		
+		
+		
+		
+		
+		<th class="last">Reference</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>number</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>customer</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invoiceDate</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isPosted</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isVoid</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+</dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="InvoiceTax">InvoiceTax<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Invoice tax adjustments
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+        <h3>Properties:</h3>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		
+		
+		
+		
+		
+		
+		<th class="last">Reference</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>taxCode</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>amount</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+</dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        </dl>
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <a href="index.html">Index</a><h3>Business Objects</h3><ul><li><a href="Account.html">Account</a></li><li><a href="Address.html">Address</a></li><li><a href="BankAccount.html">BankAccount</a></li><li><a href="CashReceipt.html">CashReceipt</a></li><li><a href="Characteristic.html">Characteristic</a></li><li><a href="ClassCode.html">ClassCode</a></li><li><a href="Contact.html">Contact</a></li><li><a href="CostCategory.html">CostCategory</a></li><li><a href="Country.html">Country</a></li><li><a href="Currency.html">Currency</a></li><li><a href="Customer.html">Customer</a></li><li><a href="CustomerGroup.html">CustomerGroup</a></li><li><a href="CustomerType.html">CustomerType</a></li><li><a href="FreightClass.html">FreightClass</a></li><li><a href="Honorific.html">Honorific</a></li><li><a href="Incident.html">Incident</a></li><li><a href="IncidentCategory.html">IncidentCategory</a></li><li><a href="IncidentResolution.html">IncidentResolution</a></li><li><a href="IncidentSeverity.html">IncidentSeverity</a></li><li><a href="Invoice.html">Invoice</a></li><li><a href="InvoiceLine.html">InvoiceLine</a></li><li><a href="Item.html">Item</a></li><li><a href="ItemAlias.html">ItemAlias</a></li><li><a href="ItemGroup.html">ItemGroup</a></li><li><a href="ItemSite.html">ItemSite</a></li><li><a href="ItemSource.html">ItemSource</a></li><li><a href="Oauth2client.html">Oauth2client</a></li><li><a href="Opportunity.html">Opportunity</a></li><li><a href="OpportunitySource.html">OpportunitySource</a></li><li><a href="OpportunityStage.html">OpportunityStage</a></li><li><a href="OpportunityType.html">OpportunityType</a></li><li><a href="PlannerCode.html">PlannerCode</a></li><li><a href="Printer.html">Printer</a></li><li><a href="Priority.html">Priority</a></li><li><a href="ProductCategory.html">ProductCategory</a></li><li><a href="Prospect.html">Prospect</a></li><li><a href="PurchaseOrder.html">PurchaseOrder</a></li><li><a href="Return.html">Return</a></li><li><a href="SalesCategory.html">SalesCategory</a></li><li><a href="SalesEmailProfile.html">SalesEmailProfile</a></li><li><a href="SalesOrder.html">SalesOrder</a></li><li><a href="SalesOrderPayment.html">SalesOrderPayment</a></li><li><a href="SalesRep.html">SalesRep</a></li><li><a href="SaleType.html">SaleType</a></li><li><a href="ShipShipment.html">ShipShipment</a></li><li><a href="ShipVia.html">ShipVia</a></li><li><a href="ShipZone.html">ShipZone</a></li><li><a href="Site.html">Site</a></li><li><a href="SiteType.html">SiteType</a></li><li><a href="States.html">States</a></li><li><a href="TaxAssignment.html">TaxAssignment</a></li><li><a href="TaxAuthority.html">TaxAuthority</a></li><li><a href="TaxClass.html">TaxClass</a></li><li><a href="TaxRate.html">TaxRate</a></li><li><a href="TaxType.html">TaxType</a></li><li><a href="TaxZone.html">TaxZone</a></li><li><a href="Terms.html">Terms</a></li><li><a href="ToDo.html">ToDo</a></li><li><a href="Unit.html">Unit</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 17:56:26 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
