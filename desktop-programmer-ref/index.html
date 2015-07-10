@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>xTuple ERP Programmer Reference</title>
+  </head>
+  <body><p>One of the advantages of working with xTuple ERP, and open source
+  software in general, is that you can change it. Add to this the ability to
+  write scripts and packages for xTuple ERP and you have a lot of flexibility
+  on how to modify or extend the core application. However, wIth an
+  application as large and complex as this, documentation of the internals is
+  important. Even for C++ experts, there is just too much code to understand
+  everything about the application without some help.</p><p>The following
+  links take you to <i>The xTuple ERP Programmer Reference</i> for different
+  versions of xTuple ERP:</p><ul>
+    <li><a
+      href="http://xtuple.github.io/desktop-programmer-ref/4.9/index.html">Most Recent</a></li>
+      <li><a
+      href="http://xtuple.github.io/desktop-programmer-ref/4.9/index.html">Release
+      4.9.0</a></li>
+      <li><a
+      href="http://xtuple.github.io/desktop-programmer-ref/4.8/index.html">Release
+      4.8.0</a></li>
+    </ul><h2>Getting Started</h2><p>When you click on one of the links above,
+  you'll see an introductory page with several tabs across the top:</p><dl>
+      <dt>Main Page</dt>
+      <dd>Clicking on this tab will always take you back to the
+      introduction.</dd>
+      <dt>Related Pages</dt>
+      <dd>The Classes tab lets you look at the documentation based on either
+      the name of the C++ class or other data structure, descriptions of the
+      classes, the class inheritance hierarchy (which classes are derived from
+      which others), or the names of class members.</dd>
+      <dt>Modules</dt>
+      <dd>Modules are parts of the source code that we have documented as
+      belonging together, regardless of file names or position in the
+      directory structure.</dd>
+      <dt>Classes</dt>
+      <dd>This is a list of all publicly available classes in the code. Most
+      windows and some widgets are represented in this list twice, once for
+      the .cpp source file and a second time as the user interface class. Qt
+      and xTuple ERP use multiple inheritance - the C++ class containing the
+      business and control logic is in the .cpp file and inherits the widgets,
+      layouts, and signal/slot connections from a separate corresponding class
+      generated from the .ui file.</dd>
+      <dt>Examples</dt>
+      <dd>The examples are a handful of JavaScript files referred to in the
+      Programmer Reference showing how to access and expand desktop client
+      functionality through extensions.</dd>
+    </dl><p>Probably the best way to start using this documentation is to pick
+  a particular window that you want to change. Then look through the Class
+  List on the Classes tab for the most likely internal name for that window
+  (see the <a
+  href="https://github.com/xtuple/qt-client/wiki/Hacking-the-xTuple-Desktop-Client-Core#finding-what-to-change">qt-client
+  wiki</a> for another way to get this name). Once you have a good candidate,
+  you'll likely see two lines with that same name, one just plain and the
+  other starting "Ui:". For example, if you are looking for the window that
+  lets you create or edit a currency exchange rate, search for "currency" on
+  the Class Index. You should find the following (and a few other
+  lines):</p><ul>
+      <li>currencyConversion (Ui) - the user interface definition (window
+      layout and widgets) for the exchange rate window</li>
+      <li>currencyConversion - the actions defined for the exchange rate
+      window</li>
+      <li>currencyConversions (Ui) - the window layout and widgets for the
+      window listing all of the defined exchange rates</li>
+      <li>currencyConversions - the actions defined for the window listing all
+      of the defined exchange rates</li>
+    </ul><p>Click on <code>currencyConversion</code>. The resulting page shows
+  a handful of member functions and slots. These are the functions and slots
+  defined specifically for the currencyConversion window (class). Near the top
+  of the page, however, you'll see a List of all members link. Clicking here
+  will bring up a list of all members of the currencyConversion class,
+  including those that it inherits from its parent classes, QDialog and
+  Ui_currencyConversion (which in turn comes from
+  Ui::currencyConversion).</p><p>Now you can find the internal names of the
+  pair of dates (a DateCluster widget called <code>_dateCluster</code>), the
+  field for entering the exchange rate, and other widgets. If you want to
+  learn more about what a particular item on the list is for, click the name
+  of the item. For example, clicking on <code>_rate</code> will show you the
+  documentation for the <code>_rate</code> button. If you want to find out
+  what you can do with the <code>_rate</code> field (e.g., can you hide it?),
+  click on the <code>XLineEdit</code> link.</p><p>The programmer reference
+  documentation is sparse. The addition of details is a work in progress. If
+  you would like to help with this effort, please send email to <a
+  href="mailto:devdocs@xtuple.com?subject=xTuple%20ERP%20Programmer%20Reference%20contributions">devdocs@xtuple.com</a>.
+  See the <a
+  href="http://www.stack.nl/~dimitri/doxygen/manual.html">Doxygen Manual</a>
+  for information on how to tag your contributions.</p></body>
+</html>
