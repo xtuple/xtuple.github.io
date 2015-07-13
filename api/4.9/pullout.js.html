@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: enyo-x/source/views/pullout.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: enyo-x/source/views/pullout.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint indent:2, curly:true, eqeqeq:true, immed:true, latedef:true,
+newcap:true, noarg:true, regexp:true, undef:true, trailing:true,
+white:true*/
+/*global enyo:true, XT:true, XV:true, _:true */
+
+(function () {
+
+  var _historyPanelIndex = 0;
+  var _helpPanelIndex = 1;
+
+  /**
+   @name XV.Pullout
+   @class Derived from &lt;a href="http://enyojs.com/api/#enyo.Slideable">enyo.Slideable&lt;/a>.
+   @extends enyo.Slideable
+   */
+  enyo.kind(
+    /** @lends XV.Pullout# */{
+    name: "XV.Pullout",
+    kind: "enyo.Slideable",
+    classes: "xv-pullout",
+    value: -100,
+    min: -100,
+    unit: '%',
+    events: {
+      onHistoryItemSelected: ""
+    },
+    published: {
+      selectedPanel: ""
+    },
+    components: [
+      {name: "containerPanels", kind: "enyo.Panels", style: "height: 100%", draggable: false, components: [
+        {name: "history", components: [
+          {classes: "xv-header", content: "_history".loc()},
+          {kind: "XV.ScrollableGroupbox", classes: "history-panel", components: [
+            {kind: "Repeater", name: "historyList",
+              onSetupItem: "setupHistoryItem", count: 0, components: [
+              {name: "historyItem"}
+            ]}
+          ]}
+        ]},
+        {name: "help", components: [
+          {classes: "xv-header", content: "_help".loc()},
+          {tag: "iframe", name: "helpPage", attributes: {height: "90%"}, classes: "help-panel"}
+        ]}
+      ]}
+    ],
+    /**
+      A parameter widget has been passed to us in an event. Make sure that the payload of the
+      event gets added to our pullout items.
+
+      @param {Object} inEvent
+      @param {Function} inEvent.getParameterWidget Returns the *string* name of the parameter widget
+     */
+    addPulloutItem: function (inSender, inEvent) {
+      var widgetName = inEvent.getParameterWidget();
+      if (widgetName) {
+        this._parameterWidgets[inEvent.name] = {
+          name: inEvent.name,
+          kind: widgetName,
+          container: this.$.container
+        };
+      }
+    },
+    /**
+      Tries to pre-populate the history list from a cookie if present
+     */
+    create: function () {
+      this.inherited(arguments);
+      this._parameterWidgets = {};
+      var that = this,
+        callback = function () {
+          that.preLoadHistory();
+        };
+
+      XT.getStartupManager().registerCallback(callback, true);
+    },
+    createSearchPanel: function (item) {
+      var panel = this.$.containerPanels.createComponent(
+        {kind: "XV.ScrollableGroupbox", name: item.name + "Scroller", components: [
+          {classes: "xv-header", content: "_advancedSearch".loc()},
+          item
+        ]}
+      );
+      panel.render();
+      this.$.containerPanels.reflow();
+      this.$.containerPanels.setIndex(this.$.containerPanels.getPanels().length - 1);
+      return panel;
+    },
+    preLoadHistory: function () {
+      var dbName = XT.session.details.organization,
+        cookieValue = enyo.getCookie("history_" + dbName),
+        historyArray,
+        i,
+        historyItem,
+        mockModel = {},
+        getValue = function () {
+          return historyItem.modelName;
+        },
+        get = function () {
+          return historyItem.modelId;
+        };
+
+      if (!cookieValue || cookieValue === 'undefined') {
+        // There's no cookie yet for this parameter list
+        return;
+      }
+
+      historyArray = JSON.parse(cookieValue);
+
+      // Running through the array backwards allows us to preserve the
+      // reverse chronology of the history list.
+      for (i = historyArray.length - 1; i >= 0; i--) {
+        historyItem = historyArray[i];
+        // The mock model we create here is built to fool XT.addToHistory
+        // into thinking it's a real model. This code is fragile to any
+        // change in that function.
+        mockModel.recordType = historyItem.modelType;
+        mockModel.getValue = getValue;
+        mockModel.get = get;
+        XT.addToHistory(historyItem.workspaceType, mockModel);
+      }
+      this.refreshHistoryList();
+    },
+    /**
+      Return the parameter widget of the requested name, if it has been created.
+     */
+    getParameterWidget: function (name) {
+      // if the parameter widget don't exist, create it
+      if (!this.$.containerPanels.$[name]) {
+        var item = this._parameterWidgets[name];
+        if (item) {
+          this.createSearchPanel(item);
+        }
+      }
+      return this.$.containerPanels.$[name];
+    },
+    /**
+      Refreshes the history list.
+     */
+    refreshHistoryList: function () {
+      this.$.historyList.setCount(XT.getHistory().length);
+    },
+    setupHistoryItem: function (inSender, inEvent) {
+      var historyItem = inEvent.item.$.historyItem;
+      var historyData = XT.getHistory()[inEvent.index];
+      var modelTypeShow = ("_" + historyData.modelType.suffix().camelize()).loc();
+      this.createComponent({
+        container: historyItem,
+        classes: "xv-list-item enyo-border-box",
+        ontap: "doHistoryItemSelected",
+        content: modelTypeShow + ": " + historyData.modelName,
+        modelType: historyData.modelType,
+        id: historyData.modelId,
+        workspace: historyData.workspaceType
+      });
+    },
+    /**
+
+      Sets the pullout to be the appropriate panel (either history or
+      the apppropriate advanced search). May or may not show the panel,
+      depending on inEvent.show.
+
+      @param {Object} inSender
+      @param {Object} inEvent
+      @param {String} inEvent.name The name of the panel, or the word "history" or "help"
+      @param {Boolean} inEvent.show Whether or not we want to show the panel
+    */
+    togglePullout: function (inSender, inEvent) {
+      // Note that if you show history, then move to a list with a panel, then pull the
+      // pullout, it will show the advanced search and not history.
+      var name = inEvent.name,
+        item = this._parameterWidgets[name],
+        child,
+        forceMin = this.isAtMax() && this.getSelectedPanel() === name;
+      if (!item && !_.contains(["history", "help"], name)) {
+        // if we've moved to a list with no advanced search and pull the pullout
+        // again show history instead.
+        name = 'history';
+
+        if (!inEvent.show) {
+          // nothing to see here.
+          // for example, the user has backed out into the main splash screen
+          // just pull back the pullout
+          // but we do want the pullout to be set at "history" in case it gets
+          // drawn next for a list with no advanced search
+          forceMin = true;
+        }
+      }
+
+      // keep track of the current panel name for internal use
+      this.setSelectedPanel(name);
+
+      if (name === 'history') {
+        // show the history panel
+        this.$.containerPanels.setIndex(_historyPanelIndex);
+
+      } else if (name === 'help') {
+        // show the help panel
+        if (inEvent.url) {
+          this.$.helpPage.setAttribute("src", inEvent.url);
+        }
+        this.$.containerPanels.setIndex(_helpPanelIndex);
+
+      } else {
+        // show the advanced search panel
+        if (inEvent.show && !forceMin && !inEvent.minimizing) {
+          //
+          // Add the parameter widget in a panel unless it already exists
+          //
+          var panelExists = false;
+          for (var i = 0; i &lt; this.$.containerPanels.getPanels().length; i++) {
+            if (this.$.containerPanels.getPanels()[i].name === name + "Scroller") {
+              panelExists = true;
+              break;
+            }
+          }
+          if (panelExists) {
+            this.$.containerPanels.setIndex(i);
+          } else {
+            this.createSearchPanel(item);
+          }
+        }
+      }
+
+      if (forceMin) {
+        //
+        // Coerce a minimization of the pullout.
+        //
+        this.animateToMin();
+
+      } else if (this.isAtMin() && inEvent.show) {
+        //
+        // Coerce a maximization of the pullout.
+        //
+        this.animateToMax();
+      }
+    }
+  });
+
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li><li><a href="global.html#workspace">workspace</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 16:42:53 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

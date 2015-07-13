@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: ParameterWidget</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Class: ParameterWidget</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+        <span class="ancestors"><a href="XV.html">XV</a>.</span>
+    
+    ParameterWidget
+    </h2>
+    
+        <div class="class-description">Contains a set of fittable rows to implement the Advanced Search feature.<br />
+    Each row is a <a href="XV.ParameterItem.html">XV.ParameterItem</a> and represents a parameter on which
+    the user can narrow the search results.<br />
+    Derived from <a href="http://enyojs.com/api/#enyo.FittableRows">enyo.FittableRows</a>.</div>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h4 class="name" id="ParameterWidget"><span class="type-signature"></span>new ParameterWidget<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line108">line 108</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li>enyo.FittableRows</li>
+        </ul>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="buildColumnList"><span class="type-signature"></span>buildColumnList<span class="signature">(index)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sends list object from the parent kind to the layout form
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line264">line 264</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="clearParameters"><span class="type-signature"></span>clearParameters<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Clear all of the currently loaded parameters and bubble
+      parameter change events.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line435">line 435</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Setup function for the parameter widget which adds the
+     item management forms to the top of the kind and the
+     characteristics to the bottom of the kind. Also loads
+     the last filter choice and sets the parameter values for
+     this choice.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line146">line 146</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="defaultFilterChanged"><span class="type-signature"></span>defaultFilterChanged<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        When the default filter is set, populate the
+      params with the values.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line271">line 271</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getParameters"><span class="type-signature"></span>getParameters<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Returns an array of the parameter search objects.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line278">line 278</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getSelectedValues"><span class="type-signature"></span>getSelectedValues<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Retrieves parameter values. By default returns values as human readable
+      strings. Boolean options are:<br />
+        &#42; name - If true returns the parameter item control name, otherwise returns the label.<br />
+        &#42; value - If true returns the control value, other wise returns a human readable string.<br />
+        &#42; deltaDate - If true returns as string for the date difference for date widgets. (i.e. "+5").
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line302">line 302</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadItem"><span class="type-signature"></span>loadItem<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Gets the model from the change
+      event and populates the fields with parameter
+      values from the model.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line412">line 412</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="populateFromUserPref"><span class="type-signature"></span>populateFromUserPref<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Reads the last filter value from the user preferences
+      and populates the filter picker with this value.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line477">line 477</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="populateLayout"><span class="type-signature"></span>populateLayout<span class="signature">(params)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Loops through the values in the params object
+      and sets the value on attribute fields in the
+      layout tree. Bubbles up a change event after
+      all of the fields are set.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line451">line 451</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="populateParameters"><span class="type-signature"></span>populateParameters<span class="signature">(params)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Loops through the values in the params object
+      and sets the value on the parameter fields and
+      bubbles up the change events.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line462">line 462</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="saveItem"><span class="type-signature"></span>saveItem<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Receives the event from the item form with the user-
+      entered values and combines these with the other item values
+      for a save.
+      If the item name already exists for this type, it performs an edit
+      instead of a new insert.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line368">line 368</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="saveToUserPref"><span class="type-signature"></span>saveToUserPref<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Saves the last selected filter and layout to the user
+      preference table.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line506">line 506</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setParameterItemValues"><span class="type-signature"></span>setParameterItemValues<span class="signature">(items)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Accepts an array of items to push into the parameter items. Matches item name
+      to component under the assumption that there will be a component by the
+      name of the incoming name (which itself is the name of the model attribute).
+      Fails silently if it cannot find the name.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>items</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>item.name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">A string *or an array of strings* with the name or attr of
+        the attribute to be updated. In the case of an array, this function will set
+        any component that matches any of the names, and ignore the rest.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>item.value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The payload of the setValue to the ParameterItem.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>item.showing</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Set to false to completely hide and disable the parameter.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parameter.js.html">enyo-x/source/widgets/parameter.js</a>, <a href="parameter.js.html#line538">line 538</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li><li><a href="global.html#workspace">workspace</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 16:43:14 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

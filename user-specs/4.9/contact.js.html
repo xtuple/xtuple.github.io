@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: contact.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: contact.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint indent:2, curly:true, eqeqeq:true, immed:true, latedef:true,
+newcap:true, noarg:true, regexp:true, undef:true, strict:true, trailing:true,
+white:true*/
+/*global XV:true, XT:true, _:true, console:true, XM:true, Backbone:true, require:true, assert:true,
+setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe:true, beforeEach:true */
+
+(function () {
+  "use strict";
+
+  var _ = require("underscore"),
+    assert = require("chai").assert,
+    common = require("../lib/common");
+
+  /**
+  Contacts are people who may be associated directly with CRM accounts, customers,
+  ship-to addresses, vendors, vendor addresses, and sites.
+    @class
+    @alias Contact
+    @property {String} Number [Required] Displays the system-defined number used to identify the contact.
+    @property {Boolean} isActive Select if you are actively doing business with this contact. Not selecting makes the contact inactive.
+    @property {String} Honorific
+    @property {String} FirstName
+    @property {String} MiddleName
+    @property {String} LastName
+    @property {String} Suffix
+    @property {String} JobTitle
+    @property {String} Initials
+    @property {String} phone
+    @property {String} alternative
+    @property {String} fax
+    @property {String} PrimaryEmail
+    @property {String} WebAddress
+    @property {Account} Account
+    @property {UserAccount} owner
+    @property {String} notes
+    @property {Address} Address
+    @property {String} email
+    @property {String} Comments
+    @property {ContactCharacteristics} Characteristics
+    @property {DocumentAssociations} documents
+  */
+  var spec = {
+    recordType: "XM.Contact",
+    collectionType: null,
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description The Contact has no cache defined
+    */
+    cacheName: null,
+    listKind: "XV.ContactList",
+    instanceOf: "XM.Document",
+    /**
+      @member -
+      @memberof Contact.prototype
+      @description Contacts are lockable.
+    */
+    isLockable: true,
+    idAttribute: "number",
+    enforceUpperKey: true,
+    attributes: ["id", "number", "isActive", "honorific", "firstName", "middleName", "lastName",
+    "suffix", "jobTitle", "initials", "phone", "alternate", "fax", "primaryEmail", "webAddress",
+    "account", "owner", "notes", "address", "email", "comments", "characteristics", "crmaccountUsers",
+    "incidentRelations", "opportunityRelations", "toDoRelations", "projectRelations",
+    "documents"],
+    requiredAttributes: ["number"],
+    /**
+      @member -
+      @memberof Contact.prototype
+      @description Used in the crm and project module
+    */
+    extensions: ["crm", "project"],
+    /**
+      @member -
+      @memberof Contact.prototype
+      @description Contacts can be read by users with "ViewAllContacts" privilege and can be
+      created, updated, or deleted by users with the "MaintainAllContacts" privilege.
+    */
+    privileges: {
+      createUpdateDelete: ["MaintainAllContacts", "MaintainPersonalContacts"],
+      read: ["ViewAllContacts", "ViewPersonalContacts"]
+    },
+    createHash: {
+      firstName: "Michael" + Math.random(),
+      middleName: "mtext",
+      lastName: "ltext",
+      suffix: "Jr",
+      jobTitle: "Dev",
+      phone: "111-222-333",
+      webAddress: "www.example.com",
+      primaryEmail: "modonnell@xtuple.com",
+      account: { number: "TTOYS"},
+      notes: "contact notes"
+    },
+    beforeSaveUIActions: [{
+      it: "Can add an address",
+      action: function (workspace, done) {
+        workspace.$.addressWidget.edit();
+        setTimeout(function () {
+          workspace.$.addressWidget.$.line1.setValue("100 School Street");
+          workspace.$.addressWidget.$.city.setValue("Carlisle");
+          done();
+        }, 1000);
+      }
+    }],
+    updatableField: "firstName"
+  };
+  var additionalTests = function () {
+  /**
+    @member -
+    @memberof Contact.prototype
+    @description Users with "ViewPersonalContacts" privilege can read their personal contacts
+    but cannot read the contact's owned by other users. Users with "MaintainPersonalContacts"
+    privilege can create, update or delete their personal contacts but not the contacts owned
+    by other users
+    */
+    it.skip("Users with \"ViewPersonalContacts\" privilege can read their personal contacts" +
+      "but cannot read the contacts owned by other users. ", function () {
+    });
+    it.skip("Users with \"MaintainPersonalContacts\" privilege can create, update or delete" +
+    "their personal contacts but not the contacts owned by other users", function () {
+    });
+      /**
+    @member -
+    @memberof Contact.prototype
+    @description Comments panel should exist to add new comments to the Contact
+    */
+    it.skip("Comments panel should exist to add new comments to the Contact", function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description Documents panel should exist to connect the Contacts to : Account, contact,
+      Customer, File, Incident, Item, Link, Opportunity, Project, To do
+    */
+    it.skip("Documents panel should exist to connect the Contacts to : Account, contact," +
+      "Customer, File, Incident, Item, Link, Opportunity, Project, To do", function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description Email Addresses panel should exist to add email addresses related to the contact
+    */
+    it.skip("Email Addresses panel should exist to add email addresses related to the contact",
+        function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description TO DO panel should exist to attach existing/new To Dos to the Contact
+    */
+    it.skip("TO DO panel should exist to attach existing/new To Dos to the Contact", function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description Opportunities panel should exist to attach existing/new Opportunities to the Contact
+    */
+    it.skip("Opportunities panel should exist to attach existing/new Opportunities to the Contact", function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description Incidents panel should exist to attach existing/new Incidents to the Contact
+    */
+    it.skip("Incidents panel should exist to attach existing/new Incidents to the Contact", function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description Projects panel should exist to attach existing/new Projects to the Contact
+    */
+    it.skip("Projects panel should exist to attach existing/new Projects to the Contact", function () {
+    });
+    /**
+    @member -
+    @memberof Contact.prototype
+    @description Contacts attached as a primary/secondary contact to a CRM account cannot be
+    deleted
+    */
+    it.skip("Contacts attached as a primary/secondary contact to a CRM account cannot be " +
+    "deleted", function () {
+    });
+  };
+  exports.spec = spec;
+  exports.additionalTests = additionalTests;
+}());
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <a href="index.html">Index</a><h3>Business Objects</h3><ul><li><a href="Account.html">Account</a></li><li><a href="Address.html">Address</a></li><li><a href="BankAccount.html">BankAccount</a></li><li><a href="CashReceipt.html">CashReceipt</a></li><li><a href="Characteristic.html">Characteristic</a></li><li><a href="ClassCode.html">ClassCode</a></li><li><a href="Contact.html">Contact</a></li><li><a href="CostCategory.html">CostCategory</a></li><li><a href="Country.html">Country</a></li><li><a href="Currency.html">Currency</a></li><li><a href="Customer.html">Customer</a></li><li><a href="CustomerGroup.html">CustomerGroup</a></li><li><a href="CustomerType.html">CustomerType</a></li><li><a href="FreightClass.html">FreightClass</a></li><li><a href="Honorific.html">Honorific</a></li><li><a href="Incident.html">Incident</a></li><li><a href="IncidentCategory.html">IncidentCategory</a></li><li><a href="IncidentResolution.html">IncidentResolution</a></li><li><a href="IncidentSeverity.html">IncidentSeverity</a></li><li><a href="Invoice.html">Invoice</a></li><li><a href="InvoiceLine.html">InvoiceLine</a></li><li><a href="Item.html">Item</a></li><li><a href="ItemAlias.html">ItemAlias</a></li><li><a href="ItemGroup.html">ItemGroup</a></li><li><a href="ItemSite.html">ItemSite</a></li><li><a href="ItemSource.html">ItemSource</a></li><li><a href="Oauth2client.html">Oauth2client</a></li><li><a href="Opportunity.html">Opportunity</a></li><li><a href="OpportunitySource.html">OpportunitySource</a></li><li><a href="OpportunityStage.html">OpportunityStage</a></li><li><a href="OpportunityType.html">OpportunityType</a></li><li><a href="PlannerCode.html">PlannerCode</a></li><li><a href="Printer.html">Printer</a></li><li><a href="Priority.html">Priority</a></li><li><a href="ProductCategory.html">ProductCategory</a></li><li><a href="Prospect.html">Prospect</a></li><li><a href="PurchaseOrder.html">PurchaseOrder</a></li><li><a href="Return.html">Return</a></li><li><a href="SalesCategory.html">SalesCategory</a></li><li><a href="SalesEmailProfile.html">SalesEmailProfile</a></li><li><a href="SalesOrder.html">SalesOrder</a></li><li><a href="SalesOrderPayment.html">SalesOrderPayment</a></li><li><a href="SalesRep.html">SalesRep</a></li><li><a href="SaleType.html">SaleType</a></li><li><a href="ShipShipment.html">ShipShipment</a></li><li><a href="ShipVia.html">ShipVia</a></li><li><a href="ShipZone.html">ShipZone</a></li><li><a href="Site.html">Site</a></li><li><a href="SiteType.html">SiteType</a></li><li><a href="States.html">States</a></li><li><a href="TaxAssignment.html">TaxAssignment</a></li><li><a href="TaxAuthority.html">TaxAuthority</a></li><li><a href="TaxClass.html">TaxClass</a></li><li><a href="TaxRate.html">TaxRate</a></li><li><a href="TaxType.html">TaxType</a></li><li><a href="TaxZone.html">TaxZone</a></li><li><a href="Terms.html">Terms</a></li><li><a href="ToDo.html">ToDo</a></li><li><a href="Unit.html">Unit</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 17:56:21 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Business Object: IncidentCategory</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Business Object: IncidentCategory</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+    Definition
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Incident categories are used by the incident management system to categorize incidents.
+  TIP: You must manually create incident categories if you want the ability to assign them to incidents. If no incident categories are defined, then none will be available when entering incidents.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+        <h3>Properties:</h3>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		
+		
+		
+		
+		
+		
+		<th class="last">Reference</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>Name</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>Description</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>Order</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>Email</code></td>
+            
+            
+            
+            
+            
+            
+            
+            
+            <td class="description last">Delivery Profile</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+</dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h2 class="subsection-title">Related Information</h2>
+        
+        <dl>
+            <ul>
+<dt>
+    
+    
+      <h4 class="name" id="-">Other<span class="type-signature"></span></h4>
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The ID attribute is "name", which will not be automatically uppercased.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>Used in the crm and billing modules
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>IncidentCategories are lockable.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>The Incident Category collection is cached.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        
+            <ul>
+<dt>
+    
+    
+    
+    
+</dt>
+<dd>
+    
+      <li>IncidentCategories can be read by anyone but can only be created, updated,
+        or deleted by users with the "MaintainIncidentCategories" privilege.
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+</ul>
+        </dl>
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <a href="index.html">Index</a><h3>Business Objects</h3><ul><li><a href="Account.html">Account</a></li><li><a href="Address.html">Address</a></li><li><a href="BankAccount.html">BankAccount</a></li><li><a href="CashReceipt.html">CashReceipt</a></li><li><a href="Characteristic.html">Characteristic</a></li><li><a href="ClassCode.html">ClassCode</a></li><li><a href="Contact.html">Contact</a></li><li><a href="CostCategory.html">CostCategory</a></li><li><a href="Country.html">Country</a></li><li><a href="Currency.html">Currency</a></li><li><a href="Customer.html">Customer</a></li><li><a href="CustomerGroup.html">CustomerGroup</a></li><li><a href="CustomerType.html">CustomerType</a></li><li><a href="FreightClass.html">FreightClass</a></li><li><a href="Honorific.html">Honorific</a></li><li><a href="Incident.html">Incident</a></li><li><a href="IncidentCategory.html">IncidentCategory</a></li><li><a href="IncidentResolution.html">IncidentResolution</a></li><li><a href="IncidentSeverity.html">IncidentSeverity</a></li><li><a href="Invoice.html">Invoice</a></li><li><a href="InvoiceLine.html">InvoiceLine</a></li><li><a href="Item.html">Item</a></li><li><a href="ItemAlias.html">ItemAlias</a></li><li><a href="ItemGroup.html">ItemGroup</a></li><li><a href="ItemSite.html">ItemSite</a></li><li><a href="ItemSource.html">ItemSource</a></li><li><a href="Oauth2client.html">Oauth2client</a></li><li><a href="Opportunity.html">Opportunity</a></li><li><a href="OpportunitySource.html">OpportunitySource</a></li><li><a href="OpportunityStage.html">OpportunityStage</a></li><li><a href="OpportunityType.html">OpportunityType</a></li><li><a href="PlannerCode.html">PlannerCode</a></li><li><a href="Printer.html">Printer</a></li><li><a href="Priority.html">Priority</a></li><li><a href="ProductCategory.html">ProductCategory</a></li><li><a href="Prospect.html">Prospect</a></li><li><a href="PurchaseOrder.html">PurchaseOrder</a></li><li><a href="Return.html">Return</a></li><li><a href="SalesCategory.html">SalesCategory</a></li><li><a href="SalesEmailProfile.html">SalesEmailProfile</a></li><li><a href="SalesOrder.html">SalesOrder</a></li><li><a href="SalesOrderPayment.html">SalesOrderPayment</a></li><li><a href="SalesRep.html">SalesRep</a></li><li><a href="SaleType.html">SaleType</a></li><li><a href="ShipShipment.html">ShipShipment</a></li><li><a href="ShipVia.html">ShipVia</a></li><li><a href="ShipZone.html">ShipZone</a></li><li><a href="Site.html">Site</a></li><li><a href="SiteType.html">SiteType</a></li><li><a href="States.html">States</a></li><li><a href="TaxAssignment.html">TaxAssignment</a></li><li><a href="TaxAuthority.html">TaxAuthority</a></li><li><a href="TaxClass.html">TaxClass</a></li><li><a href="TaxRate.html">TaxRate</a></li><li><a href="TaxType.html">TaxType</a></li><li><a href="TaxZone.html">TaxZone</a></li><li><a href="Terms.html">Terms</a></li><li><a href="ToDo.html">ToDo</a></li><li><a href="Unit.html">Unit</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 17:56:26 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

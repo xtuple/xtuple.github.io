@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: backbone-x/source/workflow.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: backbone-x/source/workflow.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint indent:2, curly:true, eqeqeq:true, immed:true, latedef:true,
+newcap:true, noarg:true, regexp:true, undef:true, strict:true, trailing:true,
+white:true*/
+/*global XT:true, XM:true, Backbone:true, _:true, console:true */
+
+(function () {
+  "use strict";
+
+  /**
+    @class
+
+    An abstract class for handling workflow models.
+
+    @extends XM.Model
+  */
+  XM.Workflow = XM.Model.extend(
+    /** @lends XM.Workflow# */{
+
+    // By default, the completedParentStatus and deferredParentStatus
+    // values should drive a change to the status of the parent, but
+    // we allow it to drive a change to any other attribute of the parent
+    // if this field is overwritten by a submodel
+    parentStatusAttribute: 'status',
+
+    defaults: function () {
+      return {
+        owner: XM.currentUser,
+        assignedTo: XM.currentUser,
+        status: XM.Workflow.PENDING,
+        priority: XT.session.settings.get("DefaultPriority"),
+        sequence: 0
+      };
+    },
+
+    // ..........................................................
+    // METHODS
+    //
+
+    bindEvents: function () {
+      XM.Model.prototype.bindEvents.apply(this, arguments);
+      this.on('change:completeDate', this.completeDateDidChange);
+      this.on('change:status', this.workflowStatusDidChange);
+    },
+
+    completeDateDidChange: function (model, value, options) {
+      var completeDate = this.get("completeDate"),
+        K = XM.Workflow;
+
+      // If complete date set, mark completed
+      if (completeDate) {
+        this.set("status", K.COMPLETED);
+      }
+    },
+
+    /**
+    Returns workflow status as a localized string.
+
+    @returns {String}
+    */
+    getWorkflowStatusString: function () {
+      var K = XM.Workflow,
+        status = this.get('status');
+
+      switch (status)
+      {
+      case K.PENDING:
+        return '_pending'.loc();
+      case K.IN_PROCESS:
+        return '_inProcess'.loc();
+      case K.COMPLETED:
+        return '_completed'.loc();
+      case K.DEFERRED:
+        return '_deferred'.loc();
+      }
+    },
+
+    isActive: function () {
+      var status = this.get("status"),
+        K = XM.Workflow;
+      return status === K.PENDING || status === K.IN_PROCESS;
+    },
+
+    workflowStatusDidChange: function (model, value, options) {
+      var status = this.get("status"),
+        K = XM.Workflow,
+        parent,
+        parentStatus,
+        workflow,
+        parentStatusAttribute,
+        successors;
+
+      if (status === K.IN_PROCESS) {
+        if (!this.get("startDate")) {
+          this.set("startDate", XT.date.today());
+        }
+
+      // If marked completed
+      } else if (status === K.COMPLETED) {
+
+        // Update complete date if applicable
+        if (!this.get("completeDate")) {
+          this.set("completeDate", XT.date.today());
+        }
+
+        parent = this.get("parent");
+        workflow = parent.get("workflow");
+
+        // Update parent status if applicable
+        parentStatus = this.get("completedParentStatus");
+        parentStatusAttribute = workflow.model.prototype.parentStatusAttribute;
+        if (parentStatus) {
+          parent.set(parentStatusAttribute, parentStatus);
+        }
+
+        // Update successor statuses if applicable
+        successors = this.get("completedSuccessors") ?
+          this.get("completedSuccessors").split(",") :
+          [];
+        _.each(successors, function (successor) {
+          var item = workflow.get(successor),
+            status = item && item.get("status");
+
+          if (status === K.PENDING) {
+            item.set("status", K.IN_PROCESS);
+          }
+        });
+      } else if (status === K.DEFERRED) {
+
+        parent = this.get("parent");
+        workflow = parent.get("workflow");
+
+        // Update parent status if applicable
+        parentStatus = this.get("deferredParentStatus");
+        parentStatusAttribute = workflow.model.prototype.parentStatusAttribute;
+        if (parentStatus) {
+          parent.set(parentStatusAttribute, parentStatus);
+        }
+
+        // Update successor statuses if applicable
+        successors = this.get("deferredSuccessors") ?
+          this.get("deferredSuccessors").split(",") :
+          [];
+        _.each(successors, function (successor) {
+          var item = workflow.get(successor),
+            status = item.get("status");
+
+          if (status === K.PENDING) {
+            item.set("status", K.IN_PROCESS);
+          }
+        });
+      }
+    }
+
+  });
+
+  // Workflow status mixin
+  XM.Workflow = XM.Workflow.extend(XM.WorkflowStatus);
+
+  _.extend(XM.Workflow,
+    /** @lends XM.Workflow# */{
+
+    /**
+      Pending status for workflow.
+
+      @static
+      @constant
+      @type String
+      @default P
+    */
+    PENDING: 'P',
+
+    /**
+      Deffered status for workflow.
+
+      @static
+      @constant
+      @type String
+      @default D
+    */
+    DEFERRED: 'D',
+
+    /**
+      In-progress status for workflow.
+      @static
+      @constant
+      @type String
+      @default I
+    */
+    IN_PROCESS: 'I',
+
+    /**
+      Completed status for workflow.
+      @static
+      @constant
+      @type String
+      @default C
+    */
+    COMPLETED: 'C'
+
+  });
+
+  /**
+    @class
+
+    An abstract class for handling workflow templates.
+
+    @extends XM.Model
+  */
+  XM.WorkflowSource = XM.Model.extend(
+    /** @lends XM.WorkflowSource# */ {
+
+    defaults: function () {
+      return {
+        status: XM.Workflow.PENDING,
+        startSet: false,
+        startOffset: 0,
+        dueSet: false,
+        dueOffset: 0,
+        priority: XT.session.settings.get("DefaultPriority"),
+        sequence: 0
+      };
+    },
+
+    readOnlyAttributes: [
+      "dueOffset",
+      "startOffset"
+    ],
+
+    // ..........................................................
+    // METHODS
+    //
+
+    bindEvents: function () {
+      XM.Model.prototype.bindEvents.apply(this, arguments);
+      this.on('change:dueSet', this.dueSetDidChange);
+      this.on('change:startSet', this.startSetDidChange);
+      this.on('statusChange', this.statusDidChange);
+    },
+
+    dueSetDidChange: function () {
+      this.setReadOnly("dueOffset", !this.get("dueSet"));
+    },
+
+    statusDidChange: function () {
+      if (this.getStatus() === XM.Model.READY_CLEAN) {
+        this.dueSetDidChange();
+        this.startSetDidChange();
+      }
+    },
+
+    startSetDidChange: function () {
+      this.setReadOnly("startOffset", !this.get("startSet"));
+    }
+
+  });
+
+  /**
+    This mixin is to be used on objects that have workflow model arrays.
+  */
+  XM.WorkflowMixin = {
+    /**
+      A helper function to copy workflow templates from a source to the destination object.
+    */
+    inheritWorkflowSource: function (sourceModel, characteristicClass, workflowClass) {
+      var charProfile = sourceModel && characteristicClass ? sourceModel.get("characteristics") : false,
+        wfProfile = sourceModel && workflowClass ? sourceModel.get("workflow") : false,
+        chars = this.get("characteristics"),
+        workflow = this.get("workflow"),
+        that = this,
+        CharacteristicClass = XT.getObjectByName(characteristicClass),
+        WorkflowClass = XT.getObjectByName(workflowClass),
+
+        // Copies characteristics from source to destination
+        copyCharProfile = function () {
+          chars.reset();
+          _.each(charProfile.models, function (model) {
+            var assignment = new CharacteristicClass(null, {isNew: true});
+            assignment.set("characteristic", model.get("characteristic"));
+            assignment.set("value", model.get("value"));
+            chars.add(assignment);
+          });
+        },
+
+        // Copies workflow from source to destination
+        copyWfProfile = function () {
+          var map = {};
+          workflow.reset();
+          _.each(wfProfile.models, function (model) {
+            var item = new WorkflowClass(null, {isNew: true}),
+              id = XT.generateUUID(),
+              dueOffset = model.get("dueOffset"),
+              startOffset = model.get("startOffset"),
+              dueDate,
+              startDate;
+
+            map[model.id] = id;
+
+            if (model.get("dueSet")) {
+              dueDate = XT.date.today();
+              dueDate.setDate(dueDate.getDate() + model.get("dueOffset"));
+            }
+
+            if (model.get("startSet")) {
+              startDate = XT.date.today();
+              startDate.setDate(startDate.getDate() + model.get("startOffset"));
+            }
+
+            item.set({
+              uuid: id,
+              name: model.get("name"),
+              description: model.get("description"),
+              status: model.get("status"),
+              workflowType: model.get("workflowType"),
+              priority: model.get("priority"),
+              startDate: startDate,
+              dueDate: dueDate,
+              owner: model.get("owner") || item.get("owner"),
+              assignedTo: model.get("assignedTo") || item.get("assignedTo"),
+              sequence: model.get("sequence"),
+              notes: model.get("notes"),
+              completedParentStatus : model.get("completedParentStatus"),
+              deferredParentStatus : model.get("deferredParentStatus"),
+              completedSuccessors: model.get("completedSuccessors"),
+              deferredSuccessors: model.get("deferredSuccessors")
+            });
+            workflow.add(item);
+          });
+
+          // Reiterate through new collection and fix successor mappings
+          _.each(_.keys(map), function (uuid) {
+            _.each(workflow.models, function (model) {
+              var successors = model.get("completedSuccessors");
+              if (_.isString(successors)) {
+                model.set("completedSuccessors", successors.replace(uuid, map[uuid]));
+              }
+              successors = model.get("deferredSuccessors");
+              if (_.isString(successors)) {
+                model.set("deferredSuccessors", successors.replace(uuid, map[uuid]));
+              }
+            });
+          });
+        },
+        handleWfProfile = function () {
+          // Handle copying workflow
+          if (wfProfile && wfProfile.length) {
+            if (!workflow.length) {
+              copyWfProfile();
+            } else {
+              that.notify("_copyWorkflow?".loc(), {
+                type: XM.Model.QUESTION,
+                callback: function (response) {
+                  if (response.answer) {
+                    copyWfProfile();
+                  }
+                }
+              });
+            }
+          }
+        };
+
+      // Handle copying characteristics
+      if (charProfile && charProfile.length) {
+        if (!chars.length) {
+          copyCharProfile();
+        } else {
+          this.notify("_copyCharacteristics?".loc(), {
+            type: XM.Model.QUESTION,
+            callback: function (response) {
+              if (response.answer) {
+                copyCharProfile();
+              }
+              handleWfProfile();
+            }
+          });
+          return;
+        }
+      }
+      handleWfProfile();
+    }
+  };
+
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li><li><a href="global.html#workspace">workspace</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 16:42:51 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

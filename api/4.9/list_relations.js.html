@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: enyo-x/source/views/list_relations.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: enyo-x/source/views/list_relations.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*jshint bitwise:true, indent:2, curly:true, eqeqeq:true, immed:true,
+latedef:true, newcap:true, noarg:true, regexp:true, undef:true, trailing:true, white:true,
+strict: false*/
+/*global XT:true, XM:true, XV:true, _:true, enyo:true, Globalize:true*/
+
+(function () {
+
+  var FIRST_FETCH = 20;
+  var FETCH_TRIGGER = 5;
+
+  /**
+    @name XV.ListRelations
+    @class A control that displays a list of scrolling rows.&lt;br />
+    Use to attach to a workspace to present related data.&lt;br />
+    A superkind of {@link XV.DocumentListRelations}.&lt;br />
+    Derived from &lt;a href="http://enyojs.com/api/#enyo.List">enyo.List&lt;/a>.
+    @extends enyo.List
+  */
+  var list = /** @lends XV.ListRelations# */{
+    name: "XV.ListRelations",
+    kind: "XV.ListBase",
+    classes: "xv-list",
+    fixedHeight: true,
+    toggleSelected: true,
+    published: {
+      attr: null,
+      value: null,
+      parentKey: "",
+      orderBy: null
+    },
+    events: {
+      onParentStatusChange: ""
+    },
+    /**
+      Clear all bindings.
+     */
+    destroy: function () {
+      var value = this.getValue(),
+        models = value ? value.models : null,
+        that = this;
+      if (models) {
+        _.each(models, function (model) {
+          model.off("statusChange", that.statusChanged, that);
+        });
+      }
+      if (value) {
+        value.off("add", this.modelAdded, this);
+        value.off("remove reset", this.lengthChanged, this);
+        if (value[this.getParentKey()]) {
+          value[this.getParentKey()].off("statusChange", this.parentStatusChanged, this);
+        }
+      }
+      this.inherited(arguments);
+    },
+    /**
+      Returns the selected index as a string that looks like a number, e.g. "1"
+     */
+    getFirstSelected: function () {
+      var selected = this.getSelection().selected,
+        prop;
+      for (prop in selected) {
+        if (selected.hasOwnProperty(prop)) {
+          return prop;
+        }
+      }
+    },
+    /**
+     @todo Document the getModel method.
+     */
+    getModel: function (index) {
+      return this.readyModels()[index];
+    },
+    /**
+     @todo Document the getParent method.
+     */
+    getParent: function () {
+      var key = this.getParentKey(),
+        value = this.getValue();
+      return key && value ? value[key] : null;
+    },
+    /**
+     @todo Document the fetchRelated method.
+     */
+    fetchRelated: function (max) {
+      var parent = this.getParent(),
+        attr = this.getAttr().suffix(),
+        options = { max: max || FIRST_FETCH };
+      if (this.hasMore()) {
+        parent.fetchRelated(attr, options);
+      }
+    },
+    /**
+     @todo Document the hasMore method.
+     */
+    hasMore: function () {
+      var parent = this.getParent(),
+        value = this.getValue(),
+        count = value ? value.length : 0,
+        attr = this.getAttr().suffix(),
+        relation = parent && attr ? parent.getRelation(attr) : null,
+        keyContents = relation && relation.keyContents ? relation.keyContents : [];
+      return count &lt; keyContents.length;
+    },
+    /**
+      We want the count of the the list to be the number of READY models, so
+      this function enforces that trimming. It needs to be called even when other
+      kinds (e.g. childWorkspaces) affect the collection.
+     */
+    lengthChanged: function () {
+      var count = this.readyModels().length,
+        value = this.getValue(),
+        rowsPerPage;
+
+      // Hack: Solves scroll problem for small number of rows
+      // but doesn't seem quite right
+      rowsPerPage = count && 50 > count ? count : 50;
+      if (rowsPerPage !== this.rowsPerPage) {
+        this.setRowsPerPage(rowsPerPage);
+      }
+      if (value.comparator) { value.sort(); }
+      this.setCount(count);
+      this.refresh();
+    },
+    /**
+     @todo Document the modelAdded method.
+     */
+    modelAdded: function (model) {
+      var status = model.getStatus(),
+        K = XM.Model;
+      if (status === K.READY_CLEAN ||
+          status === K.READY_NEW) {
+        this.lengthChanged();
+      } else {
+        model.on("statusChange", this.statusChanged, this);
+      }
+    },
+    /**
+     @todo Document the orderByChanged method.
+     */
+    orderByChanged: function () {
+      var orderBy = this.getOrderBy() || [],
+        value = this.getValue();
+      if (value && orderBy.length) {
+        value.comparator = function (a, b) {
+          var aval,
+            bval,
+            attr,
+            i;
+          for (i = 0; i &lt; orderBy.length; i++) {
+            attr = orderBy[i].attribute;
+            aval = orderBy[i].descending ? b.getValue(attr) : a.getValue(attr);
+            bval = orderBy[i].descending ? a.getValue(attr) : b.getValue(attr);
+            aval = !isNaN(aval) ? aval - 0 : aval;
+            bval = !isNaN(aval) ? bval - 0 : bval;
+            if (aval !== bval) {
+              return aval > bval ? 1 : -1;
+            }
+          }
+          return 0;
+        };
+      }
+    },
+    /**
+     @todo Document the parentStatusChanged method.
+     */
+    parentStatusChanged: function (model) {
+      this.doParentStatusChange(model);
+    },
+    /**
+      Returns an array of the models whose status is not destroyed.
+     */
+    readyModels: function () {
+      // Used to return models in ready state, but problems arose in
+      // "busy" states. Too late to change the api name, so just change
+      // the logic.
+      return _.filter(this.value.models, function (model) {
+        var status = model.getStatus(),
+          K = XM.Model;
+        // Avoiding bitwise because performance matters here
+        return (status !== K.DESTROYED_DIRTY &&
+                status !== K.DESTRYED_CLEAN &&
+                status !== K.EMPTY);
+      });
+    },
+    /**
+      This version of refresh model refreshes the entire model
+      tree since it is likely child models are nested only and
+      can not be fetched independently.
+    */
+    refreshModel: function (id, afterDone) {
+      var collection = this.getValue(),
+        model = collection.get(id),
+        parent = model.getParent(true);
+
+      parent.fetch({success: afterDone});
+    },
+    /**
+     @todo Document the scroll method. How does it differ from the implementation for XV.List?
+      XXX #refactor
+     */
+    scroll: function (inSender, inEvent) {
+      var r = this.inherited(arguments),
+        bounds = this.getScrollBounds(),
+        lastShowing = this._lastShowing || 0,
+        totalRows = this.value ? this.value.length : 0,
+        rowsPerPage = bounds.clientHeight / this.rowHeight,
+        showingRows = Math.floor(bounds.top / this.rowHeight + rowsPerPage),
+        fetch =  showingRows > lastShowing &&
+          totalRows - showingRows - FETCH_TRIGGER &lt; 0 &&
+          this.hasMore();
+
+      // Manage lazy loading
+      if (fetch) {
+        this._lastShowing = showingRows;
+        this.fetchRelated(1);
+      }
+      return r;
+    },
+    /**
+      Render the list.
+
+      Note that we render readyModels here. This assumes that all the models in the
+      collection are ready, or that the length has been specially trimmed with
+      the lengthChanged function. If the count of the list is greater than the length
+      of readyModels then this will error.
+     */
+    setupItem: function (inSender, inEvent) {
+      // Inheritence just handles menu toggle
+      if (this.inherited(arguments)) { return true; }
+
+      var index,
+        isSelected,
+        model,
+        isActive,
+        isNotActive,
+        isNothing,
+        prop,
+        isPlaceholder,
+        view,
+        attr,
+        value,
+        formatter,
+        type;
+
+      index = inEvent.index;
+      isSelected = this.getToggleSelected() && inEvent.originator.isSelected(index);
+      model = this.readyModels()[index];
+      if (!model) { return; }
+      isActive = model.getValue("isActive");
+      isNotActive = _.isBoolean(isActive) ? !isActive : false;
+
+      // Loop through all attribute container children and set content
+      for (prop in this.$) {
+        if (this.$.hasOwnProperty(prop) && this.$[prop].getAttr) {
+          view = this.$[prop];
+          isPlaceholder = false;
+          attr = this.$[prop].getAttr();
+          value = model.getValue(attr);
+          formatter = view.formatter;
+          type = model.getType && model.getType(attr);
+          isNothing = _.isNull(value) || _.isUndefined(value) || value === "";
+
+          if (formatter) {
+            value = this[formatter](value, view, model);
+            isNothing = _.isNull(value) || _.isUndefined(value) || value === "";
+          } else if (!isNothing && _.contains(this.formatted, type)) {
+            value = this["format" + type](value, view, model);
+          }
+
+          if (isNothing && view.placeholder) {
+            value = view.placeholder;
+            isPlaceholder = true;
+          }
+          
+          view.setContent(value);
+          view.addRemoveClass("placeholder", isPlaceholder);
+        }
+      }
+
+      // Inactive
+      this.$.listItem.addRemoveClass("inactive", isNotActive);
+
+      // Selection
+      this.$.listItem.addRemoveClass("item-selected", isSelected);
+      return true;
+    },
+    /**
+     @todo Document the statusChanged method.
+     */
+    statusChanged: function (model) {
+      if (model.getStatus() === XM.Model.READY_CLEAN) {
+        model.off("statusChange", this.statusChanged, this);
+        this.lengthChanged();
+      }
+    },
+    /**
+     @todo Document the valueChanged method.
+     */
+    valueChanged: function () {
+      var value = this.getValue();
+      if (value) {
+        value.on("add", this.modelAdded, this);
+        value.on("remove reset", this.lengthChanged, this);
+        if (value[this.getParentKey()]) {
+          value[this.getParentKey()].on("statusChange", this.parentStatusChanged, this);
+        }
+        this.orderByChanged();
+        this.lengthChanged();
+        this.fetchRelated();
+      }
+    }
+  };
+
+  enyo.mixin(list, XV.FormattingMixin);
+  enyo.mixin(list, XV.ListMixin);
+  enyo.kind(list);
+
+}());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="XM.Alarm.html">Alarm</a></li><li><a href="XM.Characteristic.html">Characteristic</a></li><li><a href="XM.CharacteristicAssignment.html">CharacteristicAssignment</a></li><li><a href="XM.CharacteristicCollection.html">CharacteristicCollection</a></li><li><a href="XM.CharacteristicOption.html">CharacteristicOption</a></li><li><a href="XM.Collection.html">Collection</a></li><li><a href="XM.Comment.html">Comment</a></li><li><a href="XM.CommentType.html">CommentType</a></li><li><a href="XM.CommentTypeCollection.html">CommentTypeCollection</a></li><li><a href="XM.CommentTypeSource.html">CommentTypeSource</a></li><li><a href="XM.Document.html">Document</a></li><li><a href="XM.EnumMapCollection.html">EnumMapCollection</a></li><li><a href="XM.Info.html">Info</a></li><li><a href="XM.Model.html">Model</a></li><li><a href="XM.Settings.html">Settings</a></li><li><a href="XM.SimpleModel.html">SimpleModel</a></li><li><a href="XM.Source.html">Source</a></li><li><a href="XM.SourceCollection.html">SourceCollection</a></li><li><a href="XM.StaticCollection.html">StaticCollection</a></li><li><a href="XM.StaticModel.html">StaticModel</a></li><li><a href="XM.Workflow.html">Workflow</a></li><li><a href="XM.WorkflowSource.html">WorkflowSource</a></li><li><a href="XT.DataSource.html">DataSource</a></li><li><a href="XT.Error.html">Error</a></li><li><a href="XT.Foundation.html">Foundation</a></li><li><a href="XT.Session.html">Session</a></li><li><a href="XV.AddressFieldsWidget.html">AddressFieldsWidget</a></li><li><a href="XV.AddressWidget.html">AddressWidget</a></li><li><a href="XV.AssignmentBox.html">AssignmentBox</a></li><li><a href="XV.CharacteristicItem.html">CharacteristicItem</a></li><li><a href="XV.CharacteristicPicker.html">CharacteristicPicker</a></li><li><a href="XV.CharacteristicsWidget.html">CharacteristicsWidget</a></li><li><a href="XV.ChildWorkspace.html">ChildWorkspace</a></li><li><a href="XV.ChildWorkspaceContainer.html">ChildWorkspaceContainer</a></li><li><a href="XV.Column.html">Column</a></li><li><a href="XV.ComboboxWidget.html">ComboboxWidget</a></li><li><a href="XV.CommentBox.html">CommentBox</a></li><li><a href="XV.CommentBoxItem.html">CommentBoxItem</a></li><li><a href="XV.CommentTypePicker.html">CommentTypePicker</a></li><li><a href="XV.Completer.html">Completer</a></li><li><a href="XV.DateWidget.html">DateWidget</a></li><li><a href="XV.DependenciesWidget.html">DependenciesWidget</a></li><li><a href="XV.DependencyItem.html">DependencyItem</a></li><li><a href="XV.DependencyPicker.html">DependencyPicker</a></li><li><a href="XV.DocumentListRelations.html">DocumentListRelations</a></li><li><a href="XV.DocumentsBox.html">DocumentsBox</a></li><li><a href="XV.EditorMixin.html">EditorMixin</a></li><li><a href="XV.ExtensionsMixin.html">ExtensionsMixin</a></li><li><a href="XV.FileInput.html">FileInput</a></li><li><a href="XV.FormattingMixin.html">FormattingMixin</a></li><li><a href="XV.GridAttr.html">GridAttr</a></li><li><a href="XV.GridRow.html">GridRow</a></li><li><a href="XV.Groupbox.html">Groupbox</a></li><li><a href="XV.IconButton.html">IconButton</a></li><li><a href="XV.InputWidget.html">InputWidget</a></li><li><a href="XV.List.html">List</a></li><li><a href="XV.ListAttr.html">ListAttr</a></li><li><a href="XV.ListBase.html">ListBase</a></li><li><a href="XV.ListBox.html">ListBox</a></li><li><a href="XV.ListColumn.html">ListColumn</a></li><li><a href="XV.ListItem.html">ListItem</a></li><li><a href="XV.ListRelations.html">ListRelations</a></li><li><a href="XV.ListRelationsBox.html">ListRelationsBox</a></li><li><a href="XV.ListRelationsEditorBox.html">ListRelationsEditorBox</a></li><li><a href="XV.MenuItem.html">MenuItem</a></li><li><a href="XV.ModuleContainer.html">ModuleContainer</a></li><li><a href="XV.Navigator.html">Navigator</a></li><li><a href="XV.Number.html">Number</a></li><li><a href="XV.OptionsPicker.html">OptionsPicker</a></li><li><a href="XV.ParameterItem.html">ParameterItem</a></li><li><a href="XV.ParameterWidget.html">ParameterWidget</a></li><li><a href="XV.Picker.html">Picker</a></li><li><a href="XV.Pullout.html">Pullout</a></li><li><a href="XV.RelationsEditor.html">RelationsEditor</a></li><li><a href="XV.RelationWidget.html">RelationWidget</a></li><li><a href="XV.ScreenCarousel.html">ScreenCarousel</a></li><li><a href="XV.Scroller.html">Scroller</a></li><li><a href="XV.SearchContainer.html">SearchContainer</a></li><li><a href="XV.StickyCheckboxWidget.html">StickyCheckboxWidget</a></li><li><a href="XV.TextArea.html">TextArea</a></li><li><a href="XV.ToggleButtonWidget.html">ToggleButtonWidget</a></li><li><a href="XV.Tree.html">Tree</a></li><li><a href="XV.TreeNode.html">TreeNode</a></li><li><a href="XV.Workspace.html">Workspace</a></li><li><a href="XV.WorkspaceContainer.html">WorkspaceContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="XM.html">XM</a></li><li><a href="XT.html">XT</a></li><li><a href="XV.html">XV</a></li></ul><h3>Global</h3><ul><li><a href="global.html#apply">apply</a></li><li><a href="global.html#changed">changed</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#close">close</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#destroy">destroy</a></li><li><a href="global.html#destroyWorkspace">destroyWorkspace</a></li><li><a href="global.html#email">email</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#errorNotify">errorNotify</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#handleHotKey">handleHotKey</a></li><li><a href="global.html#headerChanged">headerChanged</a></li><li><a href="global.html#headerValuesChanged">headerValuesChanged</a></li><li><a href="global.html#inputChanged">inputChanged</a></li><li><a href="global.html#isDirty">isDirty</a></li><li><a href="global.html#itemTap">itemTap</a></li><li><a href="global.html#lockTapped">lockTapped</a></li><li><a href="global.html#menuChanged">menuChanged</a></li><li><a href="global.html#modelSaved">modelSaved</a></li><li><a href="global.html#newRecord">newRecord</a></li><li><a href="global.html#notify">notify</a></li><li><a href="global.html#openReport">openReport</a></li><li><a href="global.html#popupHidden">popupHidden</a></li><li><a href="global.html#print">print</a></li><li><a href="global.html#recordIdChanged">recordIdChanged</a></li><li><a href="global.html#requery">requery</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveAndClose">saveAndClose</a></li><li><a href="global.html#saveAndNew">saveAndNew</a></li><li><a href="global.html#saveTextChanged">saveTextChanged</a></li><li><a href="global.html#setupItem">setupItem</a></li><li><a href="global.html#setValue">setValue</a></li><li><a href="global.html#setWorkspace">setWorkspace</a></li><li><a href="global.html#spinnerHide">spinnerHide</a></li><li><a href="global.html#spinnerShow">spinnerShow</a></li><li><a href="global.html#statusChanged">statusChanged</a></li><li><a href="global.html#titleChanged">titleChanged</a></li><li><a href="global.html#valueChanged">valueChanged</a></li><li><a href="global.html#workspace">workspace</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 10 2015 16:42:52 GMT-0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
