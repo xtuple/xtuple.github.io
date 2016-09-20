@@ -1,316 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Find all xTuple projects in one place.">
-
-    <link href="http://www.xtuple.org/sites/all/themes/xTuple.org_theme/favicon.ico" rel="shortcut icon">
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml1.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Find all xTuple projects in one place." name="description" />
+    <link href="http://www.xtuple.org/sites/all/themes/xTuple.org_theme/favicon.ico"
+          rel="shortcut icon" />
     <!-- Bootstrap Core CSS -->
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+          rel="stylesheet" />
     <!-- Custom CSS -->
-    <link href="assets/css/xtuple-github.css" rel="stylesheet">
-
+    <link href="assets/css/xtuple-github.css" rel="stylesheet" />
     <!-- Google API, Open Sans Font -->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
-
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400"
+          rel="stylesheet" type="text/css" />
     <title>xTuple on GitHub</title>
-
-</head>
-
-<body>
-
-<div class="container">
-
-
-<!-- Intro -->
-
-    <div class="row">
-        <div class="col-md-4 col-sm-12">
-            <div class="panel intro text-center">
-                <img src="http://www.xtuple.com/sites/all/themes/bootstrap_subtheme/logo.png"/>
-                <p>Open Source business management software to power your entire company</p>
-                <p>ERP, Business Intelligence, eCommerce<br>
-                Windows, Mac, Linux, mobile</p>
-                <br>
-                <p><a href="https://www.xtuple.com" target="_blank">xTuple.com</a></p>
-                <br>
-                <p><a href="https://github.com/xtuple/xtuple/blob/master/README.md" target="_blank">About xTuple</a><br>
-                <a href="https://github.com/orgs/xtuple/people" target="_blank">Members</a><br>
-                <a href="https://github.com/xtuple/qt-client/wiki" target="_blank">Desktop Client wiki</a><br>
-                <a href="https://github.com/xtuple/xtuple/wiki" target="_blank">Mobile Web Client wiki</a><br>
-                <a href="https://github.com/xtuple" target="_blank">All Public Repos</a></p><br>
-                <a href="https://twitter.com/xTuple" class="twitter-follow-button" data-show-count="false">Follow @xTuple</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-        </div>
-
-        <div class="col-md-8 col-sm-12">
-            <div class="panel intro">
-                <h1>Why you might be interested in hacking our software</h1>
-
-                <p>Get involved with xTuple, a platform that's a great starting point for business software in practically any industry, especially inventory-based manufacturers or distributors and services-based companies.</p>
-
-                <h2><a href="https://github.com/xtuple/xtuple/wiki/Become-an-xTuple-Developer!" target="_blank">Fork</a> us. Test drive us with a <a href="http://www.xtuple.com/free-trial" target="_blank">free trial</a>.</h2>
-
-                <h2>xTuple ERP</h2>
-
-                <ul>
-                    <li>Desktop Client: Cross-platform <a href="http://github.com/xtuple/qt-client#the-xtuple-erp-desktop-client-application" target="_blank">C++ client</a> built using the Qt framework</li>
-                    <li>Mobile Web App: Browser-based <a href="https://github.com/xtuple/xtuple/wiki/Overview" target="_blank">HTML5 node.js app</a></li>
-                    <li>Database:&nbsp;<a href="https://github.com/xtuple/xtuple/tree/master/foundation-database" target="_blank">PostBooks Edition</a> schema based on PostgreSQL</li>
-                </ul>
-
-                <h2>xTuple Web-Enabled Server</h2>
-
-                <ul>
-                    <li>xTuple Admin Utility: Toolkit for <a href="https://github.com/xtuple/xtuple-admin-utility/wiki" target="_blank">server-side components</a> of the xTuple platform</li>
-                    <li>API: Feature-rich <a href="https://github.com/xtuple/xtuple/wiki/xTuple's-REST-API" target="_blank">REST API</a> modeled off Google's API</li>
-                </ul>
-
-                <h2>xTupleCommerce</h2>
-
-                <ul>
-                    <li>xDruple: Real-time <a href="https://www.xtuple.com/xtuplecommerce" target="_blank">eCommerce integration</a> with Drupal front end</li>
-                    <li>REST Client: Consumes the <a href="https://github.com/xtuple/xtuple/wiki/xTuple%27s-REST-API" target="_blank">REST API</a> for all ERP/Drupal integration</li>
-                </ul>
-
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
-
-<!-- xTuple Web-Enabled Server -->
-
-    <div class="row text-center">
-        <div class="col-lg-12">
-            <h2><strong>xTuple Web-Enabled Server</strong></h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-admin-utility">xtuple-admin-utility</a></h3>
-                <p>Node.js based server stack</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-nodejs-rest-client">xtuple-nodejs-rest-client</a></h3>
-                <p>Node.js client for REST API</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-nodejs-rest-client-example">xtuple-nodejs-rest-client-example</a></h3>
-                <p>Example Node.js client for REST API</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-ruby-rest-client-example">xtuple-ruby-rest-client-example</a></h3>
-                <p>Example Ruby client for REST API</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-php-rest-client-example">xtuple-php-rest-client-example</a></h3>
-                <p>Example PHP client for REST API</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-python-rest-client-example">xtuple-python-rest-client-example</a></h3>
-                <p>Example Python client for REST API</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/rescued">rescued</a></h3>
-                <p>REST module for Drupal</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/oauth2orize-jwt-bearer">oauth2orize-jwt-bearer</a></h3>
-                <p>JSON web token middleware for OAuth2orize</p>
-            </div>
-        </div>
-    </div>
-
-
-<!-- Desktop Client -->
-
-    <div class="row text-center">
-        <div class="col-lg-12">
-            <h2><strong>Desktop Client</strong></h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/qt-client">qt-client</a></h3>
-                <p>Desktop client code</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple/tree/master/foundation-database">xtuple</a></h3>
-                <p>Schema for foundation database (i.e. Postbooks&reg; Edition)</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-documentation/tree/master/release-notes">release notes</a></h3>
-                <p>Complete Desktop Client release notes</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtte">xtte</a></h3>
-                <p>Time &amp; Expense extension package</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/fixed-assets">fixed-assets</a></h3>
-                <p>Basic fixed assets extension package</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtdesktop">xtdesktop</a></h3>
-                <p>Desktop extension package</p>
-            </div>
-        </div>
-    </div>
-
-
-<!-- Mobile Web App -->
-
-    <div class="row text-center">
-        <div class="col-lg-12">
-            <h2><strong>Mobile Web App</strong></h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple">xtuple</a></h3>
-                <p>Core application code</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-extensions">xtuple-extensions</a></h3>
-                <p>Public extensions to the core</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xtuple-linguist">xtuple-linguist</a></h3>
-                <p>User interface translations</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- xTupleCommerce -->
-
-    <div class="row text-center">
-        <div class="col-lg-12">
-            <h2><strong>xTupleCommerce</strong></h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xdruple-drupal">xdruple-drupal</a></h3>
-                <p>Base installation for xTuple/Drupal integration</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/xdruple_commerce">xdruple_commerce</a></h3>
-                <p>Hooks for Drupal Commerce integration</p>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Other Tools -->
-
-    <div class="row text-center">
-        <div class="col-lg-12">
-            <h2><strong>Other Tools</strong></h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/openrpt">openrpt</a></h3>
-                <p>Standalone or embeddable report writer</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/updater">updater</a></h3>
-                <p>Database upgrade utility</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-sm-4">
-            <div class="panel">
-                <h3><a href="https://github.com/xtuple/csvimp">csvimp</a></h3>
-                <p>Data import tool</p>
-            </div>
-        </div>
-    </div>
-
-
-</div>
-<!-- /.container -->
-
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-
-</body>
-
+  </head>
+  <body>
+    <div class="container"><!-- Intro --> <div class="row"> <div
+    class="col-md-4 col-sm-12"> <div class="panel intro text-center"> <img
+    alt="bootstrap subtheme logo"
+    src="http://www.xtuple.com/sites/all/themes/bootstrap_subtheme/logo.png" />
+    <p>Open Source business management software to power your entire
+    company</p> <p>ERP, Business Intelligence, eCommerce<br /> Windows, Mac,
+    Linux, mobile</p> <br /> <p><a href="https://www.xtuple.com"
+    target="_blank">xTuple.com</a></p> <br /> <p><a
+    href="https://github.com/xtuple/xtuple/blob/master/README.md"
+    target="_blank">About xTuple</a><br /> <a
+    href="https://github.com/orgs/xtuple/people"
+    target="_blank">Members</a><br /> <a
+    href="https://github.com/xtuple/qt-client/wiki" target="_blank">Desktop
+    Client wiki</a><br /> <a href="https://github.com/xtuple/xtuple/wiki"
+    target="_blank">Mobile Web Client wiki</a><br /> <a
+    href="https://github.com/xtuple" target="_blank">All Public
+    Repos</a></p><br /> <a class="twitter-follow-button"
+    data-show-count="false" href="https://twitter.com/xTuple">Follow
+    @xTuple</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div> </div> <div class="col-md-8 col-sm-12"> <div class="panel intro">
+    <h1>Why you might be interested in hacking our software</h1> <p>Get
+    involved with xTuple, a platform that's a great starting point for
+    business software in practically any industry, especially inventory-based
+    manufacturers or distributors and services-based companies.</p> <h2><a
+    href="https://github.com/xtuple/xtuple/wiki/Become-an-xTuple-Developer!"
+    target="_blank">Fork</a> us. Test drive us with a <a
+    href="http://www.xtuple.com/free-trial" target="_blank">free
+    trial</a>.</h2> <h2>xTuple ERP</h2> <ul>
+        <li>Desktop Client: Cross-platform <a
+        href="http://github.com/xtuple/qt-client#the-xtuple-erp-desktop-client-application"
+        target="_blank">C++ client</a> built using the Qt framework</li>
+        <li>Mobile Web App: Browser-based <a
+        href="https://github.com/xtuple/xtuple/wiki/Overview"
+        target="_blank">HTML5 node.js app</a></li>
+        <li>Database: <a
+        href="https://github.com/xtuple/xtuple/tree/master/foundation-database"
+        target="_blank">PostBooks Edition</a> schema based on PostgreSQL</li>
+      </ul> <h2>xTuple Web-Enabled Server</h2> <ul>
+        <li>xTuple Admin Utility: Toolkit for <a
+        href="https://github.com/xtuple/xtuple-admin-utility/wiki"
+        target="_blank">server-side components</a> of the xTuple platform</li>
+        <li>API: Feature-rich <a
+        href="https://github.com/xtuple/xtuple/wiki/xTuple's-REST-API"
+        target="_blank">REST API</a> modeled off Google's API</li>
+      </ul> <h2>xTupleCommerce</h2> <ul>
+        <li>xDruple: Real-time <a href="https://www.xtuple.com/xtuplecommerce"
+        target="_blank">eCommerce integration</a> with Drupal front end</li>
+        <li>REST Client: Consumes the <a
+        href="https://github.com/xtuple/xtuple/wiki/xTuple%27s-REST-API"
+        target="_blank">REST API</a> for all ERP/Drupal integration</li>
+      </ul> </div> </div> </div> <hr /> <!-- Desktop Client --> <div
+    class="row text-center"> <div class="col-lg-12"> <h2><strong>Desktop
+    Client</strong></h2> </div> </div> <div class="row"> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/qt-client">qt-client</a></h3> <p>Desktop
+    client code</p> </div> </div> <div class="col-md-4 col-sm-4"> <div
+    class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple/tree/master/foundation-database">xtuple</a></h3>
+    <p>Schema for foundation database (i.e. Postbooks® Edition)</p> </div>
+    </div> <div class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-documentation/tree/master/release-notes">release
+    notes</a></h3> <p>Complete Desktop Client release notes</p> </div> </div>
+    </div> <div class="row"> <div class="col-md-4 col-sm-4"> <div
+    class="panel"> <h3><a href="https://github.com/xtuple/xtte">xtte</a></h3>
+    <p>Time &amp; Expense extension package</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/fixed-assets">fixed-assets</a></h3>
+    <p>Basic fixed assets extension package</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtdesktop">xtdesktop</a></h3> <p>Desktop
+    extension package</p> </div> </div> </div> <!-- xTuple Admin --> <div
+    class="row text-center"> <div class="col-lg-12"> <h2><strong>xTuple
+    Administration and Data Tools</strong></h2> </div> </div> <div
+    class="row"> <div class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-admin-utility">xtuple-admin-utility</a></h3>
+    <p>Administer the entire xTuple server stack</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/openrpt">openrpt</a></h3> <p>Standalone or
+    embeddable report writer</p> </div> </div> <div class="col-md-4 col-sm-4">
+    <div class="panel"> <h3><a
+    href="https://github.com/xtuple/updater">updater</a></h3> <p>Database
+    upgrade utility</p> </div> </div> <div class="col-md-4 col-sm-4"> <div
+    class="panel"> <h3><a
+    href="https://github.com/xtuple/csvimp">csvimp</a></h3> <p>Data import
+    tool</p> </div> </div> </div> <!-- xTupleCommerce --> <div
+    class="row text-center"> <div class="col-lg-12">
+    <h2><strong>xTupleCommerce</strong></h2> </div> </div> <div class="row">
+    <div class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xdruple-drupal">xdruple-drupal</a></h3>
+    <p>Base installation for xTuple/Drupal integration</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xdruple_commerce">xdruple_commerce</a></h3>
+    <p>Hooks for Drupal Commerce integration</p> </div> </div> </div> <!-- xTuple REST API -->
+    <div class="row text-center"> <div class="col-lg-12"> <h2><strong>xTuple
+    REST API</strong></h2> </div> </div> <div class="row"> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-nodejs-rest-client">xtuple-nodejs-rest-client</a></h3>
+    <p>Node.js client for REST API</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-nodejs-rest-client-example">xtuple-nodejs-rest-client-example</a></h3>
+    <p>Example Node.js client for REST API</p> </div> </div> </div> <div
+    class="row"> <div class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-ruby-rest-client-example">xtuple-ruby-rest-client-example</a></h3>
+    <p>Example Ruby client for REST API</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-php-rest-client-example">xtuple-php-rest-client-example</a></h3>
+    <p>Example PHP client for REST API</p> </div> </div> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-python-rest-client-example">xtuple-python-rest-client-example</a></h3>
+    <p>Example Python client for REST API</p> </div> </div> </div> <div
+    class="row"> <div class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/rescued">rescued</a></h3> <p>REST module
+    for Drupal</p> </div> </div> <div class="col-md-4 col-sm-4"> <div
+    class="panel"> <h3><a
+    href="https://github.com/xtuple/oauth2orize-jwt-bearer">oauth2orize-jwt-bearer</a></h3>
+    <p>JSON web token middleware for OAuth2orize</p> </div> </div> </div> <!-- Mobile Web App -->
+    <div class="row text-center"> <div class="col-lg-12"> <h2><strong>Mobile
+    Web App</strong></h2> </div> </div> <div class="row"> <div
+    class="col-md-4 col-sm-4"> <div class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple">xtuple</a></h3> <p>Core
+    application code</p> </div> </div> <div class="col-md-4 col-sm-4"> <div
+    class="panel"> <h3><a
+    href="https://github.com/xtuple/xtuple-linguist">xtuple-linguist</a></h3>
+    <p>User interface translations</p> </div> </div> </div> <!-- /.container --></div>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  </body>
 </html>
