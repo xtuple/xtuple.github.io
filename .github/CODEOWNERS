@@ -1,0 +1,15 @@
+# CODEOWNERS for xtuple repo
+ 
+# Default owners for everything in the repo,
+# unless a later rule overrides it
+*   @xtuple/xtuple-developers
+ 
+# Admins own sensitive config / workflows
+/.github/            @xtuple/xtuple-admins
+.github/CODEOWNERS   @xtuple/xtuple-admins
+ 
+# Example: admins also own infra/deploy configs
+/infra/              @xtuple/xtuple-admins
+/deploy/             @xtuple/xtuple-admins
+ 
+# Everything else stays with developers (already covered by *)
